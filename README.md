@@ -1,5 +1,5 @@
 # Project0
-For Project0, you will build a console-based banking application that will be presented on Wednesday, January 19th, 2022.
+For Project0, you will build a console-based banking application that will be presented on Thursday, January 20th, 2022.
 
 ## Banking Application Details
 

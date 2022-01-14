@@ -1,8 +1,5 @@
 package com.revature.app;
 
-import com.revature.models.User;
-import com.revature.util.FileDB;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
@@ -18,24 +15,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        // Shutdown hook - call shutdown() to write userList to the file.
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                try {
-                    FileDB.shutdown();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, "shutdown-thread"));
-
         // Declare vars.
         int option;
-
-        // Run startup() to populate userList.
-        FileDB.startup();
-        // Verify userList is populated.
-        System.out.println(FileDB.userList);
 
         // Run app.
         while (!loggedIn) {

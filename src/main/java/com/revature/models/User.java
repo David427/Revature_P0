@@ -2,65 +2,49 @@ package com.revature.models;
 
 public class User {
 
-    private String username;
-    private String password;
-    private boolean hasChecking;
-    private boolean hasSavings;
+    private int userId;
+    private String userLogin;
+    private String userPassword;
 
     public User() {
     }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public User(int userId, String userLogin, String userPassword) {
+        this.userId = userId;
+        this.userLogin = userLogin;
+        this.userPassword = userPassword;
     }
 
-    public User(String username, String password, boolean hasChecking, boolean hasSavings) {
-        this.username = username;
-        this.password = password;
-        this.hasChecking = hasChecking;
-        this.hasSavings = hasSavings;
+    public int getUserId() {
+        return userId;
     }
 
-    public String getUsername() {
-        return username;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getUserLogin() {
+        return userLogin;
     }
 
-    public String getPassword() {
-        return password;
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public boolean isHasChecking() {
-        return hasChecking;
-    }
-
-    public void setHasChecking(boolean hasChecking) {
-        this.hasChecking = hasChecking;
-    }
-
-    public boolean isHasSavings() {
-        return hasSavings;
-    }
-
-    public void setHasSavings(boolean hasSavings) {
-        this.hasSavings = hasSavings;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", hasChecking=" + hasChecking +
-                ", hasSavings=" + hasSavings +
+                "userId='" + userId + '\'' +
+                ", userLogin='" + userLogin + '\'' +
+                ", userPassword='" + userPassword + '\'' +
                 '}';
     }
 }

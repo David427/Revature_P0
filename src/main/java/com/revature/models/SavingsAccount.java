@@ -9,8 +9,7 @@ public class SavingsAccount {
     public SavingsAccount() {
     }
 
-    public SavingsAccount(int savingsId, String savingsName, double savingsBalance) {
-        this.savingsId = savingsId;
+    public SavingsAccount(String savingsName, double savingsBalance) {
         this.savingsName = savingsName;
         this.savingsBalance = savingsBalance;
     }

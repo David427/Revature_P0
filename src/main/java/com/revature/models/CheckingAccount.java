@@ -9,8 +9,7 @@ public class CheckingAccount {
     public CheckingAccount() {
     }
 
-    public CheckingAccount(int checkingId, String checkingName, double checkingBalance) {
-        this.checkingId = checkingId;
+    public CheckingAccount(String checkingName, double checkingBalance) {
         this.checkingName = checkingName;
         this.checkingBalance = checkingBalance;
     }

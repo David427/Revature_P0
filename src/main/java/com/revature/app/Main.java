@@ -1,5 +1,11 @@
 package com.revature.app;
 
+import com.revature.models.User;
+import com.revature.repositories.UserRepo;
+import com.revature.repositories.UserRepoImp;
+import com.revature.services.UserServiceImp;
+import com.revature.util.LinkedList;
+
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -10,7 +16,10 @@ public class Main {
     //Declare & initialize vars.
     static Scanner input = new Scanner(System.in);
     static boolean loggedIn = false;
+    static int loggedInUserId = 0;
     static boolean accountsView = false;
+    static UserRepoImp userRepo = new UserRepoImp();
+    static UserServiceImp userService = new UserServiceImp(userRepo);
 
     public static void main(String[] args) {
 
@@ -27,9 +36,25 @@ public class Main {
                         "\n==========");
                 System.out.println("Enter your username.");
                 String userLogin = input.nextLine();
+                User user = userService.findUser(userLogin);
 
-                // TODO: Implement login functionality
-                loggedIn = true;
+                if (user != null) {
+                    System.out.println("Please enter your password.");
+                    String userPassword = input.nextLine();
+
+                    while (!Objects.equals(user.getUserPassword(), userPassword)) {
+                        System.out.println("Invalid password. Please try again.");
+                        userPassword = input.nextLine();
+                    }
+
+                    if (Objects.equals(user.getUserPassword(), userPassword)) {
+                        System.out.println("Login successful! Welcome.");
+                        loggedInUserId = user.getUserId();
+                        loggedIn = true;
+                    }
+                } else {
+                    System.out.println("User not found.");
+                }
             } else if (option == 2) { //Register
                 System.out.println("========" +
                         "\nNEW USER" +
@@ -45,10 +70,10 @@ public class Main {
                     System.out.println("Passwords do not match. Try again.");
                     newPasswordConfirm = input.nextLine();
                 }
-
+                User user = new User(newLogin, newPassword);
+                System.out.println(user);
+                userService.addUser(user);
                 System.out.println("Account successfully created!");
-
-                //TODO: Implement db functionality to save the new user
             } else if (option == 3) {
                 System.out.println("Thank you for visiting David's Bank. Goodbye.");
                 exit(0);

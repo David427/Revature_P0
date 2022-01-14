@@ -14,6 +14,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void addUser(User u) {
+        userRepo.addUser(u);
     }
 
     @Override
@@ -26,13 +27,17 @@ public class UserServiceImp implements UserService {
         return userRepo.getAllUsers();
     }
 
+    public User findUser(String name) {
+        return userRepo.findUser(name);
+    }
+
     @Override
     public void updateUser(User change) {
-
+        userRepo.updateUser(change);
     }
 
     @Override
     public void deleteUser(int id) {
-
+        userRepo.deleteUser(id);
     }
 }

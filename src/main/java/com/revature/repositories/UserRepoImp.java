@@ -21,7 +21,7 @@ public class UserRepoImp implements UserRepo {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, u.getUserLogin());
             ps.setString(2, u.getUserPassword());
-            ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -34,6 +34,25 @@ public class UserRepoImp implements UserRepo {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return buildUser(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public User findUser(String name) {
+        String sql = "SELECT * FROM users WHERE u_login = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, name);
 
             ResultSet rs = ps.executeQuery();
 

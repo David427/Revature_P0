@@ -47,11 +47,7 @@ public class Main {
                         "\n==========");
                 System.out.println("Enter your username.");
                 String username = in.nextLine();
-
-                // Search in userList for the input string.
-                boolean result = FileDB.userList.search(username);
-                System.out.println(result);
-
+                // TODO: Implement login functionality
                 loggedIn = true;
             } else if (option == 2) { // Register
                 System.out.println("========" +
@@ -70,8 +66,7 @@ public class Main {
                 }
 
                 System.out.println("Account successfully created!");
-                User user = new User(newName, newPassword);
-                FileDB.userList.add(user);
+                //TODO: Implement db functionality to save the new user
             } else if (option == 3) {
                 System.out.println("Thank you for visiting David's Bank. Goodbye.");
                 exit(0);
@@ -144,6 +139,7 @@ public class Main {
         System.out.println("END OF CODE");
     }
 
+    // HELPER METHODS
     // Method that builds a menu from an array.
     public static void printMenu(String[] options) {
         for (String option : options) {

@@ -1,6 +1,5 @@
 package com.revature.app;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -8,45 +7,47 @@ import static java.lang.System.exit;
 
 public class Main {
 
-    // Declare & initialize vars.
-    static Scanner in = new Scanner(System.in);
+    //Declare & initialize vars.
+    static Scanner input = new Scanner(System.in);
     static boolean loggedIn = false;
-    static boolean viewingAccounts = false;
+    static boolean accountsView = false;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
-        // Declare vars.
+        //Declare vars.
         int option;
 
-        // Run app.
+        //Main app loop logic.
         while (!loggedIn) {
             option = loginMenu();
 
-            if (option == 1) { // Login
+            if (option == 1) { //Login
                 System.out.println("==========" +
                         "\nUSER LOGIN" +
                         "\n==========");
                 System.out.println("Enter your username.");
-                String username = in.nextLine();
+                String userLogin = input.nextLine();
+
                 // TODO: Implement login functionality
                 loggedIn = true;
-            } else if (option == 2) { // Register
+            } else if (option == 2) { //Register
                 System.out.println("========" +
                         "\nNEW USER" +
                         "\n========");
                 System.out.println("Enter a username.");
-                String newName = in.nextLine();
+                String newLogin = input.nextLine();
                 System.out.println("Thank you. Now, create a password.");
-                String newPassword = in.nextLine();
+                String newPassword = input.nextLine();
                 System.out.println("Password confirmation. Type your password again.");
-                String newPasswordConfirm = in.nextLine();
+                String newPasswordConfirm = input.nextLine();
 
                 while (!Objects.equals(newPasswordConfirm, newPassword)) {
                     System.out.println("Passwords do not match. Try again.");
-                    newPasswordConfirm = in.nextLine();
+                    newPasswordConfirm = input.nextLine();
                 }
 
                 System.out.println("Account successfully created!");
+
                 //TODO: Implement db functionality to save the new user
             } else if (option == 3) {
                 System.out.println("Thank you for visiting David's Bank. Goodbye.");
@@ -116,12 +117,12 @@ public class Main {
             //     }
             // }
         }
-
         System.out.println("END OF CODE");
+
     }
 
-    // HELPER METHODS
-    // Method that builds a menu from an array.
+    //region HELPER METHODS
+    //Method that builds a menu from an array.
     public static void printMenu(String[] options) {
         for (String option : options) {
             System.out.println(option);
@@ -146,17 +147,17 @@ public class Main {
         while (option != 1 && option != 2 && option != 3) {
             try {
                 printMenu(options);
-                option = in.nextInt();
-                in.nextLine(); // Consume newline left-over
+                option = input.nextInt();
+                input.nextLine(); //Consume newline left-over
 
                 while (option != 1 && option != 2 && option != 3) {
                     System.out.println("Please choose a valid option:");
                     printMenu(options);
-                    option = in.nextInt();
+                    option = input.nextInt();
                 }
             } catch (Exception ex) {
                 System.out.println("Invalid input. Please enter an option number:");
-                in.next();
+                input.next();
             }
         }
         return option;
@@ -178,23 +179,23 @@ public class Main {
 
             try {
                 printMenu(options);
-                option = in.nextInt();
-                in.nextLine(); // Consume newline left-over
+                option = input.nextInt();
+                input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3 && option != 4) {
                     System.out.println("Please choose a valid option:");
                     printMenu(options);
-                    option = in.nextInt();
+                    option = input.nextInt();
                 }
             } catch (Exception ex) {
                 System.out.println("Invalid input. Please enter an option number:");
-                in.next();
+                input.next();
             }
         }
         return option;
     }
 
-    // Account menus
+    //Account menus
     public static int checkingMenu() {
         int option = 0;
 
@@ -212,17 +213,17 @@ public class Main {
         while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
             try {
                 printMenu(options);
-                option = in.nextInt();
-                in.nextLine(); // Consume newline left-over
+                option = input.nextInt();
+                input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
                     System.out.println("Please choose a valid option:");
                     printMenu(options);
-                    option = in.nextInt();
+                    option = input.nextInt();
                 }
             } catch (Exception ex) {
                 System.out.println("Invalid input. Please enter an option number:");
-                in.next();
+                input.next();
             }
         }
         return option;
@@ -245,17 +246,17 @@ public class Main {
         while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
             try {
                 printMenu(options);
-                option = in.nextInt();
-                in.nextLine(); // Consume newline left-over
+                option = input.nextInt();
+                input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
                     System.out.println("Please choose a valid option:");
                     printMenu(options);
-                    option = in.nextInt();
+                    option = input.nextInt();
                 }
             } catch (Exception ex) {
                 System.out.println("Invalid input. Please enter an option number:");
-                in.next();
+                input.next();
             }
         }
         return option;
@@ -274,22 +275,21 @@ public class Main {
         while (option != 1 && option != 2 && option != 3) {
             try {
                 printMenu(options);
-                option = in.nextInt();
-                in.nextLine(); // Consume newline left-over
+                option = input.nextInt();
+                input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3) {
                     System.out.println("Please choose a valid option:");
                     printMenu(options);
-                    option = in.nextInt();
+                    option = input.nextInt();
                 }
             } catch (Exception ex) {
                 System.out.println("Invalid input. Please enter an option number:");
-                in.next();
+                input.next();
             }
         }
         return option;
     }
-
-    // NEXT MENU
+    //endregion
 
 }

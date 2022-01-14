@@ -3,6 +3,7 @@ package com.revature.models;
 public class CheckingAccount {
 
     private int checkingId;
+    private int ownerId;
     private String checkingName;
     private double checkingBalance;
 
@@ -20,6 +21,14 @@ public class CheckingAccount {
 
     public void setCheckingId(int checkingId) {
         this.checkingId = checkingId;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getCheckingName() {

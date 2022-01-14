@@ -16,12 +16,13 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public void addChecking(CheckingAccount c) {
-        String sql = "INSERT INTO c_accounts VALUES (default, ?, ?)";
+        String sql = "INSERT INTO c_accounts VALUES (default, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, c.getCheckingName());
-            ps.setDouble(2, c.getCheckingBalance());
+            ps.setInt(1, c.getOwnerId());
+            ps.setString(2, c.getCheckingName());
+            ps.setDouble(3, c.getCheckingBalance());
             ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,12 +71,13 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public void updateChecking(CheckingAccount change) {
-        String sql = "UPDATE c_accounts SET c_name = ?, c_balance = ?";
+        String sql = "UPDATE c_accounts SET owner_id = ?, c_name = ?, c_balance = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, change.getCheckingName());
-            ps.setDouble(2, change.getCheckingBalance());
+            ps.setInt(1, change.getOwnerId());
+            ps.setString(2, change.getCheckingName());
+            ps.setDouble(3, change.getCheckingBalance());
             ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,12 +99,13 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public void addSavings(SavingsAccount s) {
-        String sql = "INSERT INTO s_accounts VALUES (default, ?, ?)";
+        String sql = "INSERT INTO s_accounts VALUES (default, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, s.getSavingsName());
-            ps.setDouble(2, s.getSavingsBalance());
+            ps.setInt(1, s.getOwnerId());
+            ps.setString(2, s.getSavingsName());
+            ps.setDouble(3, s.getSavingsBalance());
             ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,12 +154,13 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public void updateSavings(SavingsAccount change) {
-        String sql = "UPDATE s_accounts SET s_name = ?, s_balance = ?";
+        String sql = "UPDATE s_accounts SET owner_id = ?, s_name = ?, s_balance = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, change.getSavingsName());
-            ps.setDouble(2, change.getSavingsBalance());
+            ps.setInt(1, change.getOwnerId());
+            ps.setString(2, change.getSavingsName());
+            ps.setDouble(3, change.getSavingsBalance());
             ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();

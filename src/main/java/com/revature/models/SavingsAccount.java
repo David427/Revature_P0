@@ -3,6 +3,7 @@ package com.revature.models;
 public class SavingsAccount {
 
     private int savingsId;
+    private int ownerId;
     private String savingsName;
     private double savingsBalance;
 
@@ -20,6 +21,14 @@ public class SavingsAccount {
 
     public void setSavingsId(int savingsId) {
         this.savingsId = savingsId;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getSavingsName() {

@@ -6,7 +6,7 @@ For Project0, you will build a console-based banking application that will be pr
 ### User Stories
 As a user, I can:
 - [X] Register a new user account with the system (must be secured with a password).
-- [ ] Login with my existing credentials.
+- [X] Login with my existing credentials.
 - [ ] Create at least one Checking or Savings account.
 - [ ] Deposit funds into an account (use doubles, not ints).
 - [ ] Withdraw funds from an account (no overdrafting!)

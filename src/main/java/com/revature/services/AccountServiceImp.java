@@ -2,6 +2,7 @@ package com.revature.services;
 
 import com.revature.models.CheckingAccount;
 import com.revature.models.SavingsAccount;
+import com.revature.models.Transaction;
 import com.revature.repositories.AccountRepo;
 import com.revature.util.LinkedList;
 
@@ -71,5 +72,25 @@ public class AccountServiceImp implements AccountService {
     @Override
     public void deleteSavings(int id) {
         accountRepo.deleteSavings(id);
+    }
+
+    @Override
+    public void addTransaction(Transaction t) {
+        accountRepo.addTransaction(t);
+    }
+
+    @Override
+    public LinkedList<Transaction> getCheckingTransactions(int id) {
+        return accountRepo.getCheckingTransactions(id);
+    }
+
+    @Override
+    public LinkedList<Transaction> getSavingsTransactions(int id) {
+        return accountRepo.getSavingsTransactions(id);
+    }
+
+    @Override
+    public LinkedList<Transaction> getAllTransactions( int id) {
+        return accountRepo.getAllTransactions(id);
     }
 }

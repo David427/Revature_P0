@@ -2,6 +2,7 @@ package com.revature.repositories;
 
 import com.revature.models.CheckingAccount;
 import com.revature.models.SavingsAccount;
+import com.revature.models.Transaction;
 import com.revature.util.JDBCConnection;
 import com.revature.util.LinkedList;
 
@@ -91,13 +92,13 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public void updateChecking(CheckingAccount change) {
-        String sql = "UPDATE c_accounts SET owner_id = ?, c_name = ?, c_balance = ?";
+        String sql = "UPDATE c_accounts SET c_name = ?, c_balance = ? WHERE c_id = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, change.getOwnerId());
-            ps.setString(2, change.getCheckingName());
-            ps.setDouble(3, change.getCheckingBalance());
+            ps.setString(1, change.getCheckingName());
+            ps.setDouble(2, change.getCheckingBalance());
+            ps.setInt(3, change.getCheckingId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -194,13 +195,13 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public void updateSavings(SavingsAccount change) {
-        String sql = "UPDATE s_accounts SET owner_id = ?, s_name = ?, s_balance = ?";
+        String sql = "UPDATE s_accounts SET s_name = ?, s_balance = ? WHERE s_id = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, change.getOwnerId());
-            ps.setString(2, change.getSavingsName());
-            ps.setDouble(3, change.getSavingsBalance());
+            ps.setString(1, change.getSavingsName());
+            ps.setDouble(2, change.getSavingsBalance());
+            ps.setInt(3, change.getSavingsId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -220,7 +221,90 @@ public class AccountRepoImp implements AccountRepo {
         }
     }
 
-    // Helper methods.
+    @Override
+    public void addTransaction(Transaction t) {
+        String sql = "INSERT INTO transactions VALUES (default, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, t.getOwnerId());
+            ps.setString(2, t.getType());
+            ps.setString(3, t.getFromAccount());
+            ps.setString(4, t.getToAccount());
+            ps.setDouble(5, t.getAmount());
+            ps.setLong(6, t.getTimestamp());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public LinkedList<Transaction> getCheckingTransactions(int id) {
+        String sql = "SELECT * FROM transactions WHERE owner_id = ? AND (t_from_account = 'Checking' OR t_to_account = 'Checking')";
+
+        try {
+            LinkedList<Transaction> transactions = new LinkedList<>();
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                transactions.add(buildTransaction(rs));
+            }
+            return transactions;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public LinkedList<Transaction> getSavingsTransactions(int id) {
+        String sql = "SELECT * FROM transactions WHERE owner_id = ? AND (t_from_account = 'Savings' OR t_to_account = 'Savings')";
+
+        try {
+            LinkedList<Transaction> transactions = new LinkedList<>();
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                transactions.add(buildTransaction(rs));
+            }
+            return transactions;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public LinkedList<Transaction> getAllTransactions(int id) {
+        String sql = "SELECT * FROM transactions WHERE owner_id = ?";
+
+        try {
+            LinkedList<Transaction> transactions = new LinkedList<>();
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                transactions.add(buildTransaction(rs));
+            }
+            return transactions;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //region HELPER METHODS
     private CheckingAccount buildChecking(ResultSet rs) throws SQLException {
         CheckingAccount c = new CheckingAccount();
         c.setCheckingId(rs.getInt("c_id"));
@@ -238,4 +322,17 @@ public class AccountRepoImp implements AccountRepo {
         s.setSavingsBalance(rs.getDouble("s_balance"));
         return s;
     }
+
+    private Transaction buildTransaction(ResultSet rs) throws SQLException {
+        Transaction t = new Transaction();
+        t.setTransactionId(rs.getInt("t_id"));
+        t.setOwnerId(rs.getInt("owner_id"));
+        t.setType(rs.getString("t_type"));
+        t.setFromAccount(rs.getString("t_from_account"));
+        t.setToAccount(rs.getString("t_to_account"));
+        t.setAmount(rs.getDouble("t_amount"));
+        t.setTimestamp(rs.getLong("t_timestamp"));
+        return t;
+    }
+    //endregion
 }

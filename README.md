@@ -7,39 +7,39 @@ For Project0, you will build a console-based banking application that will be pr
 As a user, I can:
 - [X] Register a new user account with the system (must be secured with a password).
 - [X] Login with my existing credentials.
-- [ ] Create at least one Checking or Savings account.
+- [X] Create at least one Checking or Savings account.
 - [X] Deposit funds into an account (use doubles, not ints).
 - [X] Withdraw funds from an account (no overdrafting!)
 - [X] View the balance of my account(s) (all balance displays must be in proper currency format).
 
 ### Suggested Bonus User Stories
 As a user, I can:
-- [ ] View the transaction history for an account.
+- [X] View the transaction history for an account.
 - [ ] Create more than one Checking or Savings account.
 - [ ] Share a joint account with another user.
-- [ ] Transfer money between accounts.
+- [X] Transfer money between accounts.
 
 ## Minimum Features
 All project concepts must display the following domain-independent features/requirements:
  
-- [ ] Use of custom data structures (do not use java.util Collections!)
-- [ ] Basic validation of user input (e.g., no negative deposits/withdrawals, no overdrafting, etc.) 
+- [X] Use of custom data structures (do not use java.util Collections!)
+- [X] Basic validation of user input (e.g., no negative deposits/withdrawals, no overdrafting, etc.) 
 - [ ] Unit tests for all business logic classes.
-- [ ] All exceptions are properly caught and handled.
-- [ ] Proper use of OOP principles.
+- [X] All exceptions are properly caught and handled.
+- [X] Proper use of OOP principles.
 - [ ] Documentation (all classes and methods have basic documentation).
 - [ ] Database is 3rd Normal Form compliant.
-- [ ] Referential integrity.
-- [ ] Generation of basic design documents (e.g., relational diagram, class diagram, flows, etc.)
+- [X] Referential integrity.
+- [X] Generation of basic design documents (e.g., relational diagram, class diagram, flows, etc.)
 
 
 ## Tech Stack
 Adhere to the following tech stack:
 
-- [ ] Java 8
-- [ ] Apache Maven
-- [ ] PostgreSQL (hosted on AWS RDS)
-- [ ] Git SCM (hosted on GitHub)
+- [X] Java 8
+- [X] Apache Maven
+- [X] PostgreSQL (hosted on AWS RDS)
+- [X] Git SCM (hosted on GitHub)
 
 
 ## Repo Instructions
@@ -48,5 +48,5 @@ Adhere to the following tech stack:
 - It is recommended (though not required) that you implement some kind of branching strategy when implementing new features into your application.
 
 ## Presentation
-- [ ] Finalized version of application must be pushed to personal repository by the presentation date.
-- [ ] 5 minute live demonstration of the implemented features.
+- Finalized version of application must be pushed to personal repository by the presentation date.
+- 5 minute live demonstration of the implemented features.

@@ -7,14 +7,18 @@ public class CheckingAccount {
     private String checkingName;
     private double checkingBalance;
 
+    //region CONSTRUCTORS
     public CheckingAccount() {
     }
 
-    public CheckingAccount(String checkingName, double checkingBalance) {
+    public CheckingAccount(int ownerId, String checkingName) {
+        this.ownerId = ownerId;
         this.checkingName = checkingName;
-        this.checkingBalance = checkingBalance;
+        this.checkingBalance = 0;
     }
+    //endregion
 
+    //region GETTERS & SETTERS
     public int getCheckingId() {
         return checkingId;
     }
@@ -46,6 +50,7 @@ public class CheckingAccount {
     public void setCheckingBalance(double checkingBalance) {
         this.checkingBalance = checkingBalance;
     }
+    //endregion
 
     @Override
     public String toString() {

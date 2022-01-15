@@ -2,6 +2,7 @@ package com.revature.app;
 
 import com.revature.models.CheckingAccount;
 import com.revature.models.SavingsAccount;
+import com.revature.models.Transaction;
 import com.revature.models.User;
 import com.revature.repositories.AccountRepoImp;
 import com.revature.repositories.UserRepoImp;
@@ -36,15 +37,13 @@ public class Main {
     static double savingsBalance = 0;
 
     public static void main(String[] args) {
-
-        //Declare vars.
         int option;
 
-        //Main app loop logic.
         while (!loggedIn) {
             option = loginMenu();
 
-            if (option == 1) {
+            //User actions.
+            if (option == 1) { //Log in.
                 System.out.println("==========" +
                         "\nUSER LOGIN" +
                         "\n==========");
@@ -87,7 +86,8 @@ public class Main {
                         loggedIn = true;
                     }
                 }
-            } else if (option == 2) {
+
+            } else if (option == 2) { //Register.
                 System.out.println("========" +
                         "\nNEW USER" +
                         "\n========");
@@ -99,7 +99,7 @@ public class Main {
                 boolean userExists = userList.checkIfExists(newLogin);
 
                 while (userExists) {
-                    System.out.println("ERROR: Username unavailable. Please enter a different one.");
+                    System.out.println("ERROR: Username unavailable. Please choose a different one.");
                     newLogin = input.nextLine();
                     userExists = userList.checkIfExists(newLogin);
                 }
@@ -117,35 +117,39 @@ public class Main {
                 User user = new User(newLogin, newPassword);
                 userService.addUser(user);
                 System.out.println("Account successfully created!");
-            } else if (option == 3) {
+
+            } else if (option == 3) { //Exit.
                 System.out.println("Thank you for visiting David's Bank. Goodbye.");
                 exit(0);
             }
 
+            //Main menu actions.
             while (loggedIn && !accountsView) {
                 option = mainMenu();
 
-                if (option == 1) {
+                if (option == 1) { //View Checking account.
                     accountsView = true;
 
-                    //Retrieve the account belonging to the currently logged in user.
+                    //Retrieve Checking & Savings accounts belonging to the currently logged in user.
                     CheckingAccount cAccount = accountService.getCheckingByOwner(loggedInUserId);
+                    SavingsAccount sAccount = accountService.getSavingsByOwner(loggedInUserId);
 
-                    if (cAccount == null) {
+                    if (cAccount.getCheckingId() == 0) {
                         System.out.println("ERROR: You don't have a Checking account! Please create one.");
                         accountsView = false;
                         continue;
                     }
 
-                    //Retrieve balance and friendly account name.
+                    //Retrieve account balances and friendly Checking account name.
                     checkingBalance = cAccount.getCheckingBalance();
+                    savingsBalance = sAccount.getSavingsBalance();
                     checkingName = cAccount.getCheckingName();
 
                     while (loggedIn && accountsView && !checkingView) {
                         option = checkingMenu();
                         checkingBalance = cAccount.getCheckingBalance();
 
-                        if (option == 1) {
+                        if (option == 1) { //Withdraw.
                             checkingView = true;
                             double withdrawal = 0;
                             boolean validWithdrawal = false;
@@ -173,16 +177,25 @@ public class Main {
                                     if (withdrawal <= checkingBalance) {
                                         validWithdrawal = true;
                                     }
+
                                 } catch (InputMismatchException e) {
-                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw" +
+                                            "in the following format: ##.##");
                                     input.next();
                                 }
                             }
                             cAccount.setCheckingBalance(checkingBalance - withdrawal);
                             accountService.updateChecking(cAccount);
+
+                            long currentTime = System.currentTimeMillis();
+                            Transaction transaction = new Transaction(loggedInUserId, "Withdrawal", "Checking", "N/A", withdrawal, currentTime);
+                            accountService.addTransaction(transaction);
+
+                            System.out.println("Withdrawal success: " + formatter.format(withdrawal));
                             checkingBalance = cAccount.getCheckingBalance();
                             checkingView = false;
-                        } else if (option == 2) {
+
+                        } else if (option == 2) { //Deposit.
                             checkingView = true;
                             double deposit = 0;
                             boolean validDeposit = false;
@@ -210,44 +223,118 @@ public class Main {
                                     if (deposit > 0) {
                                         validDeposit = true;
                                     }
+
                                 } catch (InputMismatchException e) {
-                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw" +
+                                            "in the following format: ##.##");
                                     input.next();
                                 }
                             }
                             cAccount.setCheckingBalance(checkingBalance + deposit);
                             accountService.updateChecking(cAccount);
+
+                            long currentTime = System.currentTimeMillis();
+                            Transaction transaction = new Transaction(loggedInUserId, "Deposit", "N/A", "Checking", deposit, currentTime);
+                            accountService.addTransaction(transaction);
+
+                            System.out.println("Deposit success: " + formatter.format(deposit));
                             checkingBalance = cAccount.getCheckingBalance();
                             checkingView = false;
-                        } else if (option == 3) {
+
+                        } else if (option == 3) { //Transfer.
                             checkingView = true;
-                            System.out.println("checkingAccount.transferToSavings();");
-                        } else if (option == 4) {
+                            double transfer = 0;
+                            boolean validTransfer = false;
+                            boolean cancelTransfer = false;
+
+                            if (sAccount.getSavingsId() == 0) {
+                                System.out.println("ERROR: You don't have a Savings account to transfer to! Please create one.");
+                                accountsView = false;
+                                continue;
+                            }
+
+                            System.out.println("Enter an amount to transfer in the following format: ##.##");
+                            while (!validTransfer && !cancelTransfer) {
+                                try {
+                                    transfer = input.nextDouble();
+
+                                    while (transfer > checkingBalance || transfer < 0) {
+                                        System.out.println("ERROR: Invalid transfer amount.");
+                                        option = accountActionErrorMenu();
+
+                                        if (option == 1) {
+                                            System.out.println("Enter a new amount.");
+                                            transfer = input.nextDouble();
+                                        } else if (option == 2) {
+                                            cancelTransfer = true;
+                                            transfer = 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (transfer <= checkingBalance) {
+                                        validTransfer = true;
+                                    }
+
+                                } catch (InputMismatchException e) {
+                                    System.out.println("ERROR: Invalid input. Enter an amount to transfer" +
+                                            "in the following format: ##.##");
+                                    input.next();
+                                }
+                            }
+                            cAccount.setCheckingBalance(checkingBalance - transfer);
+                            sAccount.setSavingsBalance(savingsBalance + transfer);
+                            accountService.updateChecking(cAccount);
+                            accountService.updateSavings(sAccount);
+
+                            long currentTime = System.currentTimeMillis();
+                            Transaction transaction = new Transaction(loggedInUserId, "Transfer", "Checking", "Savings", transfer, currentTime);
+                            accountService.addTransaction(transaction);
+
+                            System.out.println("Transfer success: " + formatter.format(transfer));
+                            checkingBalance = cAccount.getCheckingBalance();
+                            checkingView = false;
+
+                        } else if (option == 4) { //View transaction history.
                             checkingView = true;
-                            System.out.println("checkingAccount.viewHistory();");
-                        } else if (option == 5) {
+                            System.out.println("===================" +
+                                    "\nTRANSACTION HISTORY" +
+                                    "\n===================");
+                            LinkedList<Transaction> cTransactions = accountService.getCheckingTransactions(loggedInUserId);
+
+                            if (cTransactions.getSize() == 0) {
+                                System.out.println("ERROR: You have no transactions for this account.");
+                            } else {
+                                System.out.println(cTransactions);
+                            }
+                            checkingView = false;
+
+                        } else if (option == 5) { //Return.
                             accountsView = false;
                         }
                     }
-                } else if (option == 2) {
+
+                } else if (option == 2) { //View Savings account.
                     accountsView = true;
 
                     SavingsAccount sAccount = accountService.getSavingsByOwner(loggedInUserId);
+                    CheckingAccount cAccount = accountService.getCheckingByOwner(loggedInUserId);
 
-                    if (sAccount == null) {
+                    if (sAccount.getSavingsId() == 0) {
                         System.out.println("ERROR: You don't have a Savings account! Please create one.");
                         accountsView = false;
                         continue;
                     }
 
                     savingsBalance = sAccount.getSavingsBalance();
+                    checkingBalance = cAccount.getCheckingBalance();
                     savingsName = sAccount.getSavingsName();
 
                     while (loggedIn && accountsView && !savingsView) {
                         option = savingsMenu();
                         savingsBalance = sAccount.getSavingsBalance();
 
-                        if (option == 1) {
+                        if (option == 1) { //Withdraw.
                             savingsView = true;
                             double withdrawal = 0;
                             boolean validWithdrawal = false;
@@ -275,16 +362,25 @@ public class Main {
                                     if (withdrawal <= savingsBalance) {
                                         validWithdrawal = true;
                                     }
+
                                 } catch (InputMismatchException e) {
-                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw" +
+                                            "in the following format: ##.##");
                                     input.next();
                                 }
                             }
                             sAccount.setSavingsBalance(savingsBalance - withdrawal);
                             accountService.updateSavings(sAccount);
+
+                            long currentTime = System.currentTimeMillis();
+                            Transaction transaction = new Transaction(loggedInUserId, "Transfer", "Savings", "N/A", withdrawal, currentTime);
+                            accountService.addTransaction(transaction);
+
+                            System.out.println("Withdrawal success: " + formatter.format(withdrawal));
                             savingsBalance = sAccount.getSavingsBalance();
                             savingsView = false;
-                        } else if (option == 2) {
+
+                        } else if (option == 2) { //Deposit.
                             checkingView = true;
                             double deposit = 0;
                             boolean validDeposit = false;
@@ -312,37 +408,139 @@ public class Main {
                                     if (deposit > 0) {
                                         validDeposit = true;
                                     }
+
                                 } catch (InputMismatchException e) {
-                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw" +
+                                            "in the following format: ##.##");
                                     input.next();
                                 }
                             }
                             sAccount.setSavingsBalance(savingsBalance + deposit);
                             accountService.updateSavings(sAccount);
+
+                            long currentTime = System.currentTimeMillis();
+                            Transaction transaction = new Transaction(loggedInUserId, "Transfer", "N/A", "Savings", deposit, currentTime);
+                            accountService.addTransaction(transaction);
+
+                            System.out.println("Deposit success: " + formatter.format(deposit));
                             savingsBalance = sAccount.getSavingsBalance();
                             savingsView = false;
-                        } else if (option == 3) {
-                            System.out.println("savingsAccount.transferToChecking();");
-                        } else if (option == 4) {
-                            System.out.println("savingsAccount.viewHistory();");
-                        } else if (option == 5) {
+                        } else if (option == 3) { //Transfer.
+                            savingsView = true;
+                            double transfer = 0;
+                            boolean validTransfer = false;
+                            boolean cancelTransfer = false;
+
+                            if (cAccount.getCheckingId() == 0) {
+                                System.out.println("ERROR: You don't have a Checking account to transfer to! Please create one.");
+                                accountsView = false;
+                                continue;
+                            }
+
+                            System.out.println("Enter an amount to transfer in the following format: ##.##");
+                            while (!validTransfer && !cancelTransfer) {
+                                try {
+                                    transfer = input.nextDouble();
+
+                                    while (transfer > checkingBalance || transfer < 0) {
+                                        System.out.println("ERROR: Invalid transfer amount.");
+                                        option = accountActionErrorMenu();
+
+                                        if (option == 1) {
+                                            System.out.println("Enter a new amount.");
+                                            transfer = input.nextDouble();
+                                        } else if (option == 2) {
+                                            cancelTransfer = true;
+                                            transfer = 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (transfer <= savingsBalance) {
+                                        validTransfer = true;
+                                    }
+
+                                } catch (InputMismatchException e) {
+                                    System.out.println("ERROR: Invalid input. Enter an amount to transfer" +
+                                            "in the following format: ##.##");
+                                    input.next();
+                                }
+                            }
+                            sAccount.setSavingsBalance(savingsBalance - transfer);
+                            cAccount.setCheckingBalance(checkingBalance + transfer);
+                            accountService.updateSavings(sAccount);
+                            accountService.updateChecking(cAccount);
+
+                            long currentTime = System.currentTimeMillis();
+                            Transaction transaction = new Transaction(loggedInUserId, "Transfer", "Savings", "Checking", transfer, currentTime);
+                            accountService.addTransaction(transaction);
+
+                            System.out.println("Transfer success: " + formatter.format(transfer));
+                            savingsBalance = sAccount.getSavingsBalance();
+                            savingsView = false;
+
+                        } else if (option == 4) { //View transaction history.
+                            savingsView = true;
+                            System.out.println("===================" +
+                                    "\nTRANSACTION HISTORY" +
+                                    "\n===================");
+                            LinkedList<Transaction> sTransactions = accountService.getSavingsTransactions(loggedInUserId);
+
+                            if (sTransactions.getSize() == 0) {
+                                System.out.println("ERROR: You have no transactions for this account.");
+                            } else {
+                                System.out.println(sTransactions);
+                            }
+                            savingsView = false;
+
+                        } else if (option == 5) { //Return.
                             accountsView = false;
                         }
                     }
-                } else if (option == 3) {
+
+                } else if (option == 3) { //Create accounts.
                     accountsView = true;
                     option = createAccountMenu();
 
-                    if (option == 1) {
-                        // checkingAccount.create();
+                    if (option == 1) { //Create Checking.
+                        CheckingAccount cAccount = accountService.getCheckingByOwner(loggedInUserId);
+
+                        if (cAccount.getCheckingId() != 0) {
+                            System.out.println("ERROR: You already have a Checking account!");
+                            accountsView = false;
+                            continue;
+                        }
+
+                        System.out.println("Enter a friendly name for this account.");
+                        String newCheckingName = input.nextLine();
+
+                        CheckingAccount newChecking = new CheckingAccount(loggedInUserId, newCheckingName);
+                        accountService.addChecking(newChecking);
+                        System.out.println("Account '" + newCheckingName + "' created!");
                         accountsView = false;
-                    } else if (option == 2) {
-                        // savingsAccount.create();
+
+                    } else if (option == 2) { //Create Savings.
+                        SavingsAccount sAccount = accountService.getSavingsByOwner(loggedInUserId);
+
+                        if (sAccount.getSavingsId() != 0) {
+                            System.out.println("ERROR: You already have a Savings account!");
+                            accountsView = false;
+                            continue;
+                        }
+
+                        System.out.println("Enter a friendly name for this account.");
+                        String newSavingsName = input.nextLine();
+
+                        SavingsAccount newSavings = new SavingsAccount(loggedInUserId, newSavingsName);
+                        accountService.addSavings(newSavings);
+                        System.out.println("Account '" + newSavingsName + "' created!");
                         accountsView = false;
-                    } else if (option == 3) {
+
+                    } else if (option == 3) { //Return.
                         accountsView = false;
                     }
-                } else if (option == 4) {
+
+                } else if (option == 4) { //Log out.
                     System.out.println("Thank you for using David's Bank." +
                             "\nLogging you out...");
                     loggedIn = false;
@@ -360,7 +558,7 @@ public class Main {
         }
     }
 
-    // Menu methods.
+    // Non-account menus.
     public static int loginMenu() {
         int option = 0;
 
@@ -386,6 +584,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -411,6 +610,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -436,6 +636,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -467,6 +668,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -503,6 +705,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -538,6 +741,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -563,6 +767,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -592,6 +797,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -600,5 +806,4 @@ public class Main {
         return option;
     }
     //endregion
-
 }

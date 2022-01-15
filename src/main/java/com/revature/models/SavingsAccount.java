@@ -7,9 +7,18 @@ public class SavingsAccount {
     private String savingsName;
     private double savingsBalance;
 
+    //region CONSTRUCTORS
     public SavingsAccount() {
     }
 
+    public SavingsAccount(int ownerId, String savingsName) {
+        this.ownerId = ownerId;
+        this.savingsName = savingsName;
+        this.savingsBalance = 0;
+    }
+    //endregion
+
+    //region GETTERS & SETTERS
     public SavingsAccount(String savingsName, double savingsBalance) {
         this.savingsName = savingsName;
         this.savingsBalance = savingsBalance;
@@ -46,6 +55,7 @@ public class SavingsAccount {
     public void setSavingsBalance(double savingsBalance) {
         this.savingsBalance = savingsBalance;
     }
+    //endregion
 
     @Override
     public String toString() {

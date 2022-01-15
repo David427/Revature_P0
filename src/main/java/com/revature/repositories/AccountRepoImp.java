@@ -23,7 +23,7 @@ public class AccountRepoImp implements AccountRepo {
             ps.setInt(1, c.getOwnerId());
             ps.setString(2, c.getCheckingName());
             ps.setDouble(3, c.getCheckingBalance());
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -32,6 +32,25 @@ public class AccountRepoImp implements AccountRepo {
     @Override
     public CheckingAccount getChecking(int id) {
         String sql = "SELECT * FROM c_accounts WHERE c_id = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return buildChecking(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public CheckingAccount getCheckingByOwner(int id) {
+        String sql = "SELECT * FROM c_accounts WHERE owner_id = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -78,7 +97,7 @@ public class AccountRepoImp implements AccountRepo {
             ps.setInt(1, change.getOwnerId());
             ps.setString(2, change.getCheckingName());
             ps.setDouble(3, change.getCheckingBalance());
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -91,7 +110,7 @@ public class AccountRepoImp implements AccountRepo {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -106,7 +125,7 @@ public class AccountRepoImp implements AccountRepo {
             ps.setInt(1, s.getOwnerId());
             ps.setString(2, s.getSavingsName());
             ps.setDouble(3, s.getSavingsBalance());
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,6 +134,25 @@ public class AccountRepoImp implements AccountRepo {
     @Override
     public SavingsAccount getSavings(int id) {
         String sql = "SELECT * FROM s_accounts WHERE s_id = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return buildSavings(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public SavingsAccount getSavingsByOwner(int id) {
+        String sql = "SELECT * FROM s_accounts WHERE owner_id = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -161,7 +199,7 @@ public class AccountRepoImp implements AccountRepo {
             ps.setInt(1, change.getOwnerId());
             ps.setString(2, change.getSavingsName());
             ps.setDouble(3, change.getSavingsBalance());
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -174,7 +212,7 @@ public class AccountRepoImp implements AccountRepo {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -184,6 +222,7 @@ public class AccountRepoImp implements AccountRepo {
     private CheckingAccount buildChecking(ResultSet rs) throws SQLException {
         CheckingAccount c = new CheckingAccount();
         c.setCheckingId(rs.getInt("c_id"));
+        c.setOwnerId(rs.getInt("owner_id"));
         c.setCheckingName(rs.getString("c_name"));
         c.setCheckingBalance(rs.getDouble("c_balance"));
         return c;
@@ -192,6 +231,7 @@ public class AccountRepoImp implements AccountRepo {
     private SavingsAccount buildSavings(ResultSet rs) throws SQLException {
         SavingsAccount s = new SavingsAccount();
         s.setSavingsId(rs.getInt("s_id"));
+        s.setOwnerId(rs.getInt("owner_id"));
         s.setSavingsName(rs.getString("s_name"));
         s.setSavingsBalance(rs.getDouble("s_balance"));
         return s;

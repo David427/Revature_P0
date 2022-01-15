@@ -3,7 +3,9 @@ package com.revature.util;
 import com.revature.models.User;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class LinkedList <T> {
@@ -45,19 +47,23 @@ public class LinkedList <T> {
         return iterator.data;
     }
 
-    public boolean search(String username) {
+    public boolean find(String name) {
         Node<T> iterator = head;
 
-        for (int i = 0; i < size; i++) {
-            T node = iterator.data;
-            String user = node.toString();
-            iterator = iterator.next;
+        for(int i = 0; i < size; i++) {
+            T element = iterator.data;
 
-            if (user.contains(username)) {
-                return true;
+            try {
+                if (Objects.equals(element.getClass().getMethod("getUserLogin").invoke(element), name)) {
+                    return true;
+                }
+            } catch (NoSuchMethodException e) {
+                continue;
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
             }
+            iterator = iterator.next;
         }
-
         return false;
     }
 

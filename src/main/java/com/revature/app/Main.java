@@ -1,11 +1,12 @@
 package com.revature.app;
 
 import com.revature.models.User;
-import com.revature.repositories.UserRepo;
 import com.revature.repositories.UserRepoImp;
 import com.revature.services.UserServiceImp;
 import com.revature.util.LinkedList;
+import org.postgresql.util.PSQLException;
 
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -30,7 +31,7 @@ public class Main {
         while (!loggedIn) {
             option = loginMenu();
 
-            if (option == 1) { //Login
+            if (option == 1) { //Login.
                 System.out.println("==========" +
                         "\nUSER LOGIN" +
                         "\n==========");
@@ -55,12 +56,23 @@ public class Main {
                 } else {
                     System.out.println("User not found.");
                 }
-            } else if (option == 2) { //Register
+            } else if (option == 2) { //Register.
                 System.out.println("========" +
                         "\nNEW USER" +
                         "\n========");
                 System.out.println("Enter a username.");
                 String newLogin = input.nextLine();
+
+                //Populate a list of users from the db to perform unique username checking.
+                LinkedList<User> userList = userService.getAllUsers();
+                boolean userExists = userList.find(newLogin);
+
+                while (userExists) {
+                    System.out.println("Username unavailable. Please enter a different one.");
+                    newLogin = input.nextLine();
+                    userExists = userList.find(newLogin);
+                }
+
                 System.out.println("Thank you. Now, create a password.");
                 String newPassword = input.nextLine();
                 System.out.println("Password confirmation. Type your password again.");
@@ -70,8 +82,8 @@ public class Main {
                     System.out.println("Passwords do not match. Try again.");
                     newPasswordConfirm = input.nextLine();
                 }
+
                 User user = new User(newLogin, newPassword);
-                System.out.println(user);
                 userService.addUser(user);
                 System.out.println("Account successfully created!");
             } else if (option == 3) {
@@ -79,68 +91,68 @@ public class Main {
                 exit(0);
             }
 
-            // // Main Menu
-            // while(loggedIn && !viewingAccounts) {
-            //     option = mainMenu();
-            //
-            //     if (option == 1) {
-            //         viewingAccounts = true;
-            //         option = checkingMenu();
-            //
-            //         if (option == 1) {
-            //             System.out.println("checkingAccount.withdraw();");
-            //             // checkingAccount.withdraw();
-            //         } else if (option == 2) {
-            //             System.out.println("checkingAccount.deposit();");
-            //             // checkingAccount.deposit();
-            //         } else if (option == 3) {
-            //             System.out.println("checkingAccount.transferToSavings();");
-            //             // checkingAccount.transferToSavings();
-            //         } else if (option == 4) {
-            //             System.out.println("checkingAccount.viewHistory();");
-            //             // checkingAccount.viewHistory();
-            //         }
-            //         else if (option == 5) {
-            //             viewingAccounts = false;
-            //         }
-            //     } else if (option == 2) {
-            //         viewingAccounts = true;
-            //         option = savingsMenu();
-            //
-            //         if (option == 1) {
-            //             System.out.println("savingsAccount.withdraw();");
-            //             // savingsAccount.withdraw();
-            //         } else if (option == 2) {
-            //             System.out.println("savingsAccount.deposit();");
-            //             // savingsAccount.deposit();
-            //         } else if (option == 3) {
-            //             System.out.println("savingsAccount.transferToChecking();");
-            //             // savingsAccount.transferToChecking();
-            //         } else if (option == 4) {
-            //             System.out.println("savingsAccount.viewHistory();");
-            //             // savingsAccount.viewHistory();
-            //         } else if (option == 5) {
-            //             viewingAccounts = false;
-            //         }
-            //     } else if (option == 3) {
-            //         viewingAccounts = true;
-            //         option = createAccountMenu();
-            //
-            //         if (option == 1) {
-            //             // checkingAccount.create();
-            //             viewingAccounts = false;
-            //         } else if (option == 2) {
-            //             // savingsAccount.create();
-            //             viewingAccounts = false;
-            //         } else if (option == 3) {
-            //             viewingAccounts = false;
-            //         }
-            //     } else if (option == 4) {
-            //         System.out.println("Thank you for using David's Bank." +
-            //                 "\nLogging you out...");
-            //         loggedIn = false;
-            //     }
-            // }
+            //Main Menu
+             while(loggedIn && !accountsView) {
+                 option = mainMenu();
+
+                 if (option == 1) {
+                     accountsView = true;
+                     option = checkingMenu();
+
+                     if (option == 1) {
+                         System.out.println("checkingAccount.withdraw();");
+                         // checkingAccount.withdraw();
+                     } else if (option == 2) {
+                         System.out.println("checkingAccount.deposit();");
+                         // checkingAccount.deposit();
+                     } else if (option == 3) {
+                         System.out.println("checkingAccount.transferToSavings();");
+                         // checkingAccount.transferToSavings();
+                     } else if (option == 4) {
+                         System.out.println("checkingAccount.viewHistory();");
+                         // checkingAccount.viewHistory();
+                     }
+                     else if (option == 5) {
+                         accountsView = false;
+                     }
+                 } else if (option == 2) {
+                     accountsView = true;
+                     option = savingsMenu();
+
+                     if (option == 1) {
+                         System.out.println("savingsAccount.withdraw();");
+                         // savingsAccount.withdraw();
+                     } else if (option == 2) {
+                         System.out.println("savingsAccount.deposit();");
+                         // savingsAccount.deposit();
+                     } else if (option == 3) {
+                         System.out.println("savingsAccount.transferToChecking();");
+                         // savingsAccount.transferToChecking();
+                     } else if (option == 4) {
+                         System.out.println("savingsAccount.viewHistory();");
+                         // savingsAccount.viewHistory();
+                     } else if (option == 5) {
+                         accountsView = false;
+                     }
+                 } else if (option == 3) {
+                     accountsView = true;
+                     option = createAccountMenu();
+
+                     if (option == 1) {
+                         // checkingAccount.create();
+                         accountsView = false;
+                     } else if (option == 2) {
+                         // savingsAccount.create();
+                         accountsView = false;
+                     } else if (option == 3) {
+                         accountsView = false;
+                     }
+                 } else if (option == 4) {
+                     System.out.println("Thank you for using David's Bank." +
+                             "\nLogging you out...");
+                     loggedIn = false;
+                 }
+             }
         }
         System.out.println("END OF CODE");
 
@@ -195,9 +207,9 @@ public class Main {
         System.out.print("=========" +
                 "\nMAIN MENU" +
                 "\n=========" + "\n");
-        String[] options = {"1 | View your Checking account.",
-                "2 | View your Savings account.",
-                "3 | Create an account.",
+        String[] options = {"1 | View Checking account(s).",
+                "2 | View Savings account(s).",
+                "3 | Create a new account.",
                 "4 | Log out."};
 
         while (option != 1 && option != 2 && option != 3 && option != 4) {
@@ -231,7 +243,7 @@ public class Main {
                 "\n================");
         String[] options = {"1 | Withdraw funds.",
                 "2 | Deposit funds.",
-                "3 | Transfer funds to Savings.",
+                "3 | Transfer funds to another account.",
                 "4 | View transaction history.",
                 "5 | Return."};
 
@@ -264,7 +276,7 @@ public class Main {
                 "\n===============");
         String[] options = {"1 | Withdraw funds.",
                 "2 | Deposit funds.",
-                "3 | Transfer funds to Checking.",
+                "3 | Transfer funds to another account.",
                 "4 | View transaction history.",
                 "5 | Return."};
 

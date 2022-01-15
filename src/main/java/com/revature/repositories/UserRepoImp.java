@@ -21,7 +21,7 @@ public class UserRepoImp implements UserRepo {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, u.getUserLogin());
             ps.setString(2, u.getUserPassword());
-            ResultSet rs = ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -94,7 +94,7 @@ public class UserRepoImp implements UserRepo {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, change.getUserLogin());
             ps.setString(2, change.getUserPassword());
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -107,7 +107,7 @@ public class UserRepoImp implements UserRepo {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
-            ps.executeQuery();
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

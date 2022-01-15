@@ -8,9 +8,9 @@ As a user, I can:
 - [X] Register a new user account with the system (must be secured with a password).
 - [X] Login with my existing credentials.
 - [ ] Create at least one Checking or Savings account.
-- [ ] Deposit funds into an account (use doubles, not ints).
-- [ ] Withdraw funds from an account (no overdrafting!)
-- [ ] View the balance of my account(s) (all balance displays must be in proper currency format).
+- [X] Deposit funds into an account (use doubles, not ints).
+- [X] Withdraw funds from an account (no overdrafting!)
+- [X] View the balance of my account(s) (all balance displays must be in proper currency format).
 
 ### Suggested Bonus User Stories
 As a user, I can:

@@ -47,7 +47,7 @@ public class LinkedList <T> {
         return iterator.data;
     }
 
-    public boolean find(String name) {
+    public boolean checkIfExists(String name) {
         Node<T> iterator = head;
 
         for(int i = 0; i < size; i++) {
@@ -64,22 +64,6 @@ public class LinkedList <T> {
             }
             iterator = iterator.next;
         }
-        return false;
-    }
-
-    public boolean searchPassword(String username) {
-        Node<T> iterator = head;
-
-        for (int i = 0; i < size; i++) {
-            T node = iterator.data;
-            String user = node.toString();
-            iterator = iterator.next;
-
-            if (user.contains(username)) {
-                return true;
-            }
-        }
-
         return false;
     }
 

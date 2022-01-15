@@ -1,12 +1,16 @@
 package com.revature.app;
 
+import com.revature.models.CheckingAccount;
+import com.revature.models.SavingsAccount;
 import com.revature.models.User;
+import com.revature.repositories.AccountRepoImp;
 import com.revature.repositories.UserRepoImp;
+import com.revature.services.AccountServiceImp;
 import com.revature.services.UserServiceImp;
 import com.revature.util.LinkedList;
-import org.postgresql.util.PSQLException;
 
-import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -16,11 +20,20 @@ public class Main {
 
     //Declare & initialize vars.
     static Scanner input = new Scanner(System.in);
+    static UserRepoImp userRepo = new UserRepoImp();
+    static UserServiceImp userService = new UserServiceImp(userRepo);
+    static AccountRepoImp accountRepo = new AccountRepoImp();
+    static AccountServiceImp accountService = new AccountServiceImp(accountRepo);
+    static NumberFormat formatter = NumberFormat.getCurrencyInstance();
     static boolean loggedIn = false;
     static int loggedInUserId = 0;
     static boolean accountsView = false;
-    static UserRepoImp userRepo = new UserRepoImp();
-    static UserServiceImp userService = new UserServiceImp(userRepo);
+    static boolean checkingView = false;
+    static boolean savingsView = false;
+    static String checkingName;
+    static String savingsName;
+    static double checkingBalance = 0;
+    static double savingsBalance = 0;
 
     public static void main(String[] args) {
 
@@ -31,7 +44,7 @@ public class Main {
         while (!loggedIn) {
             option = loginMenu();
 
-            if (option == 1) { //Login.
+            if (option == 1) {
                 System.out.println("==========" +
                         "\nUSER LOGIN" +
                         "\n==========");
@@ -39,13 +52,33 @@ public class Main {
                 String userLogin = input.nextLine();
                 User user = userService.findUser(userLogin);
 
+                while (user == null) {
+                    System.out.println("ERROR: User not found.");
+                    option = userNotFoundMenu();
+
+                    if (option == 1) {
+                        System.out.println("Enter your username.");
+                        userLogin = input.nextLine();
+                        user = userService.findUser(userLogin);
+                    } else {
+                        break;
+                    }
+                }
+
                 if (user != null) {
-                    System.out.println("Please enter your password.");
+                    System.out.println("Enter your password.");
                     String userPassword = input.nextLine();
 
                     while (!Objects.equals(user.getUserPassword(), userPassword)) {
-                        System.out.println("Invalid password. Please try again.");
-                        userPassword = input.nextLine();
+                        System.out.println("ERROR: Invalid password. Please try again.");
+                        option = passwordNotFoundMenu();
+
+                        if (option == 1) {
+                            System.out.println("Enter your password.");
+                            userPassword = input.nextLine();
+                        } else {
+                            break;
+                        }
                     }
 
                     if (Objects.equals(user.getUserPassword(), userPassword)) {
@@ -53,10 +86,8 @@ public class Main {
                         loggedInUserId = user.getUserId();
                         loggedIn = true;
                     }
-                } else {
-                    System.out.println("User not found.");
                 }
-            } else if (option == 2) { //Register.
+            } else if (option == 2) {
                 System.out.println("========" +
                         "\nNEW USER" +
                         "\n========");
@@ -65,12 +96,12 @@ public class Main {
 
                 //Populate a list of users from the db to perform unique username checking.
                 LinkedList<User> userList = userService.getAllUsers();
-                boolean userExists = userList.find(newLogin);
+                boolean userExists = userList.checkIfExists(newLogin);
 
                 while (userExists) {
-                    System.out.println("Username unavailable. Please enter a different one.");
+                    System.out.println("ERROR: Username unavailable. Please enter a different one.");
                     newLogin = input.nextLine();
-                    userExists = userList.find(newLogin);
+                    userExists = userList.checkIfExists(newLogin);
                 }
 
                 System.out.println("Thank you. Now, create a password.");
@@ -79,7 +110,7 @@ public class Main {
                 String newPasswordConfirm = input.nextLine();
 
                 while (!Objects.equals(newPasswordConfirm, newPassword)) {
-                    System.out.println("Passwords do not match. Try again.");
+                    System.out.println("ERROR: Passwords do not match. Try again.");
                     newPasswordConfirm = input.nextLine();
                 }
 
@@ -91,71 +122,234 @@ public class Main {
                 exit(0);
             }
 
-            //Main Menu
-             while(loggedIn && !accountsView) {
-                 option = mainMenu();
+            while (loggedIn && !accountsView) {
+                option = mainMenu();
 
-                 if (option == 1) {
-                     accountsView = true;
-                     option = checkingMenu();
+                if (option == 1) {
+                    accountsView = true;
 
-                     if (option == 1) {
-                         System.out.println("checkingAccount.withdraw();");
-                         // checkingAccount.withdraw();
-                     } else if (option == 2) {
-                         System.out.println("checkingAccount.deposit();");
-                         // checkingAccount.deposit();
-                     } else if (option == 3) {
-                         System.out.println("checkingAccount.transferToSavings();");
-                         // checkingAccount.transferToSavings();
-                     } else if (option == 4) {
-                         System.out.println("checkingAccount.viewHistory();");
-                         // checkingAccount.viewHistory();
-                     }
-                     else if (option == 5) {
-                         accountsView = false;
-                     }
-                 } else if (option == 2) {
-                     accountsView = true;
-                     option = savingsMenu();
+                    //Retrieve the account belonging to the currently logged in user.
+                    CheckingAccount cAccount = accountService.getCheckingByOwner(loggedInUserId);
 
-                     if (option == 1) {
-                         System.out.println("savingsAccount.withdraw();");
-                         // savingsAccount.withdraw();
-                     } else if (option == 2) {
-                         System.out.println("savingsAccount.deposit();");
-                         // savingsAccount.deposit();
-                     } else if (option == 3) {
-                         System.out.println("savingsAccount.transferToChecking();");
-                         // savingsAccount.transferToChecking();
-                     } else if (option == 4) {
-                         System.out.println("savingsAccount.viewHistory();");
-                         // savingsAccount.viewHistory();
-                     } else if (option == 5) {
-                         accountsView = false;
-                     }
-                 } else if (option == 3) {
-                     accountsView = true;
-                     option = createAccountMenu();
+                    if (cAccount == null) {
+                        System.out.println("ERROR: You don't have a Checking account! Please create one.");
+                        accountsView = false;
+                        continue;
+                    }
 
-                     if (option == 1) {
-                         // checkingAccount.create();
-                         accountsView = false;
-                     } else if (option == 2) {
-                         // savingsAccount.create();
-                         accountsView = false;
-                     } else if (option == 3) {
-                         accountsView = false;
-                     }
-                 } else if (option == 4) {
-                     System.out.println("Thank you for using David's Bank." +
-                             "\nLogging you out...");
-                     loggedIn = false;
-                 }
-             }
+                    //Retrieve balance and friendly account name.
+                    checkingBalance = cAccount.getCheckingBalance();
+                    checkingName = cAccount.getCheckingName();
+
+                    while (loggedIn && accountsView && !checkingView) {
+                        option = checkingMenu();
+                        checkingBalance = cAccount.getCheckingBalance();
+
+                        if (option == 1) {
+                            checkingView = true;
+                            double withdrawal = 0;
+                            boolean validWithdrawal = false;
+                            boolean cancelWithdrawal = false;
+
+                            System.out.println("Enter an amount to withdraw in the following format: ##.##");
+                            while (!validWithdrawal && !cancelWithdrawal) {
+                                try {
+                                    withdrawal = input.nextDouble();
+
+                                    while (withdrawal > checkingBalance || withdrawal < 0) {
+                                        System.out.println("ERROR: Invalid withdrawal amount.");
+                                        option = accountActionErrorMenu();
+
+                                        if (option == 1) {
+                                            System.out.println("Enter a new amount.");
+                                            withdrawal = input.nextDouble();
+                                        } else if (option == 2) {
+                                            cancelWithdrawal = true;
+                                            withdrawal = 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (withdrawal <= checkingBalance) {
+                                        validWithdrawal = true;
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    input.next();
+                                }
+                            }
+                            cAccount.setCheckingBalance(checkingBalance - withdrawal);
+                            accountService.updateChecking(cAccount);
+                            checkingBalance = cAccount.getCheckingBalance();
+                            checkingView = false;
+                        } else if (option == 2) {
+                            checkingView = true;
+                            double deposit = 0;
+                            boolean validDeposit = false;
+                            boolean cancelDeposit = false;
+
+                            System.out.println("Enter an amount to deposit in the following format: ##.##");
+                            while (!validDeposit && !cancelDeposit) {
+                                try {
+                                    deposit = input.nextDouble();
+
+                                    while (deposit < 0) {
+                                        System.out.println("ERROR: Cannot deposit a negative amount.");
+                                        option = accountActionErrorMenu();
+
+                                        if (option == 1) {
+                                            System.out.println("Enter a new amount.");
+                                            deposit = input.nextDouble();
+                                        } else if (option == 2) {
+                                            cancelDeposit = true;
+                                            deposit = 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (deposit > 0) {
+                                        validDeposit = true;
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    input.next();
+                                }
+                            }
+                            cAccount.setCheckingBalance(checkingBalance + deposit);
+                            accountService.updateChecking(cAccount);
+                            checkingBalance = cAccount.getCheckingBalance();
+                            checkingView = false;
+                        } else if (option == 3) {
+                            checkingView = true;
+                            System.out.println("checkingAccount.transferToSavings();");
+                        } else if (option == 4) {
+                            checkingView = true;
+                            System.out.println("checkingAccount.viewHistory();");
+                        } else if (option == 5) {
+                            accountsView = false;
+                        }
+                    }
+                } else if (option == 2) {
+                    accountsView = true;
+
+                    SavingsAccount sAccount = accountService.getSavingsByOwner(loggedInUserId);
+
+                    if (sAccount == null) {
+                        System.out.println("ERROR: You don't have a Savings account! Please create one.");
+                        accountsView = false;
+                        continue;
+                    }
+
+                    savingsBalance = sAccount.getSavingsBalance();
+                    savingsName = sAccount.getSavingsName();
+
+                    while (loggedIn && accountsView && !savingsView) {
+                        option = savingsMenu();
+                        savingsBalance = sAccount.getSavingsBalance();
+
+                        if (option == 1) {
+                            savingsView = true;
+                            double withdrawal = 0;
+                            boolean validWithdrawal = false;
+                            boolean cancelWithdrawal = false;
+
+                            System.out.println("Enter an amount to withdraw in the following format: ##.##");
+                            while (!validWithdrawal && !cancelWithdrawal) {
+                                try {
+                                    withdrawal = input.nextDouble();
+
+                                    while (withdrawal > savingsBalance || withdrawal < 0) {
+                                        System.out.println("ERROR: Invalid withdrawal amount.");
+                                        option = accountActionErrorMenu();
+
+                                        if (option == 1) {
+                                            System.out.println("Enter a new amount.");
+                                            withdrawal = input.nextDouble();
+                                        } else if (option == 2) {
+                                            cancelWithdrawal = true;
+                                            withdrawal = 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (withdrawal <= savingsBalance) {
+                                        validWithdrawal = true;
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    input.next();
+                                }
+                            }
+                            sAccount.setSavingsBalance(savingsBalance - withdrawal);
+                            accountService.updateSavings(sAccount);
+                            savingsBalance = sAccount.getSavingsBalance();
+                            savingsView = false;
+                        } else if (option == 2) {
+                            checkingView = true;
+                            double deposit = 0;
+                            boolean validDeposit = false;
+                            boolean cancelDeposit = false;
+
+                            System.out.println("Enter an amount to deposit in the following format: ##.##");
+                            while (!validDeposit && !cancelDeposit) {
+                                try {
+                                    deposit = input.nextDouble();
+
+                                    while (deposit < 0) {
+                                        System.out.println("ERROR: Cannot deposit a negative amount.");
+                                        option = accountActionErrorMenu();
+
+                                        if (option == 1) {
+                                            System.out.println("Enter a new amount.");
+                                            deposit = input.nextDouble();
+                                        } else if (option == 2) {
+                                            cancelDeposit = true;
+                                            deposit = 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (deposit > 0) {
+                                        validDeposit = true;
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("ERROR: Invalid input. Enter an amount to withdraw in the following format: ##.##");
+                                    input.next();
+                                }
+                            }
+                            sAccount.setSavingsBalance(savingsBalance + deposit);
+                            accountService.updateSavings(sAccount);
+                            savingsBalance = sAccount.getSavingsBalance();
+                            savingsView = false;
+                        } else if (option == 3) {
+                            System.out.println("savingsAccount.transferToChecking();");
+                        } else if (option == 4) {
+                            System.out.println("savingsAccount.viewHistory();");
+                        } else if (option == 5) {
+                            accountsView = false;
+                        }
+                    }
+                } else if (option == 3) {
+                    accountsView = true;
+                    option = createAccountMenu();
+
+                    if (option == 1) {
+                        // checkingAccount.create();
+                        accountsView = false;
+                    } else if (option == 2) {
+                        // savingsAccount.create();
+                        accountsView = false;
+                    } else if (option == 3) {
+                        accountsView = false;
+                    }
+                } else if (option == 4) {
+                    System.out.println("Thank you for using David's Bank." +
+                            "\nLogging you out...");
+                    loggedIn = false;
+                }
+            }
         }
         System.out.println("END OF CODE");
-
     }
 
     //region HELPER METHODS
@@ -177,8 +371,8 @@ public class Main {
                 "\napplication, type a menu" +
                 "\noption number and Enter." +
                 "\n========================");
-        String[] options = {"1 | Log in to your account.",
-                "2 | Register for a new account.",
+        String[] options = {"1 | Log in.",
+                "2 | Register.",
                 "3 | Exit."};
 
         while (option != 1 && option != 2 && option != 3) {
@@ -188,17 +382,66 @@ public class Main {
                 input.nextLine(); //Consume newline left-over
 
                 while (option != 1 && option != 2 && option != 3) {
-                    System.out.println("Please choose a valid option:");
+                    System.out.println("ERROR: Please choose a valid option:");
                     printMenu(options);
                     option = input.nextInt();
                 }
             } catch (Exception ex) {
-                System.out.println("Invalid input. Please enter an option number:");
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
             }
         }
         return option;
+    }
 
+    public static int userNotFoundMenu() {
+        int option = 0;
+
+        String[] options = {"1 | Try again.",
+                "2 | Cancel."};
+
+        while (option != 1 && option != 2) {
+            try {
+                printMenu(options);
+                option = input.nextInt();
+                input.nextLine();
+
+                while (option != 1 && option != 2) {
+                    System.out.println("ERROR: Please choose a valid option:");
+                    printMenu(options);
+                    option = input.nextInt();
+                }
+            } catch (Exception ex) {
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
+                input.next();
+            }
+        }
+        return option;
+    }
+
+    public static int passwordNotFoundMenu() {
+        int option = 0;
+
+        String[] options = {"1 | Try again.",
+                "2 | Cancel."};
+
+        while (option != 1 && option != 2) {
+            try {
+                printMenu(options);
+                option = input.nextInt();
+                input.nextLine();
+
+                while (option != 1 && option != 2) {
+                    System.out.println("ERROR: Please choose a valid option:");
+                    printMenu(options);
+                    option = input.nextInt();
+                }
+            } catch (Exception ex) {
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
+                input.next();
+            }
+        }
+        return option;
     }
 
     public static int mainMenu() {
@@ -207,8 +450,8 @@ public class Main {
         System.out.print("=========" +
                 "\nMAIN MENU" +
                 "\n=========" + "\n");
-        String[] options = {"1 | View Checking account(s).",
-                "2 | View Savings account(s).",
+        String[] options = {"1 | View your Checking account.",
+                "2 | View your Savings account.",
                 "3 | Create a new account.",
                 "4 | Log out."};
 
@@ -220,12 +463,12 @@ public class Main {
                 input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3 && option != 4) {
-                    System.out.println("Please choose a valid option:");
+                    System.out.println("ERROR: Please choose a valid option:");
                     printMenu(options);
                     option = input.nextInt();
                 }
             } catch (Exception ex) {
-                System.out.println("Invalid input. Please enter an option number:");
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
             }
         }
@@ -236,14 +479,16 @@ public class Main {
     public static int checkingMenu() {
         int option = 0;
 
-        System.out.print("================" +
+        System.out.print("================================" +
                 "\nCHECKING ACCOUNT" +
-                "\n----------------");
-        System.out.println("\nBalance: "/* + checkingAccount.balance */ +
-                "\n================");
+                "\n--------------------------------");
+        System.out.println("\nName: " + checkingName +
+                "\n--------------------------------");
+        System.out.println("Balance: " + formatter.format(checkingBalance) +
+                "\n================================");
         String[] options = {"1 | Withdraw funds.",
                 "2 | Deposit funds.",
-                "3 | Transfer funds to another account.",
+                "3 | Transfer funds to Savings.",
                 "4 | View transaction history.",
                 "5 | Return."};
 
@@ -254,12 +499,12 @@ public class Main {
                 input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
-                    System.out.println("Please choose a valid option:");
+                    System.out.println("ERROR: Please choose a valid option:");
                     printMenu(options);
                     option = input.nextInt();
                 }
             } catch (Exception ex) {
-                System.out.println("Invalid input. Please enter an option number:");
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
             }
         }
@@ -269,14 +514,16 @@ public class Main {
     public static int savingsMenu() {
         int option = 0;
 
-        System.out.print("===============" +
+        System.out.print("==============================" +
                 "\nSAVINGS ACCOUNT" +
-                "\n---------------");
-        System.out.println("\nBalance: "/* + savingsAccount.balance */ +
-                "\n===============");
+                "\n-------------------------------");
+        System.out.println("\nName: " + savingsName +
+                "\n--------------------------------");
+        System.out.println("Balance: " + formatter.format(savingsBalance) +
+                "\n==============================");
         String[] options = {"1 | Withdraw funds.",
                 "2 | Deposit funds.",
-                "3 | Transfer funds to another account.",
+                "3 | Transfer funds to Checking.",
                 "4 | View transaction history.",
                 "5 | Return."};
 
@@ -287,12 +534,37 @@ public class Main {
                 input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
-                    System.out.println("Please choose a valid option:");
+                    System.out.println("ERROR: Please choose a valid option:");
                     printMenu(options);
                     option = input.nextInt();
                 }
             } catch (Exception ex) {
-                System.out.println("Invalid input. Please enter an option number:");
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
+                input.next();
+            }
+        }
+        return option;
+    }
+
+    private static int accountActionErrorMenu() {
+        int option = 0;
+
+        String[] options = {"1 | Enter a new amount.",
+                "2 | Cancel."};
+
+        while (option != 1 && option != 2) {
+            try {
+                printMenu(options);
+                option = input.nextInt();
+                input.nextLine();
+
+                while (option != 1 && option != 2) {
+                    System.out.println("ERROR: Please choose a valid option:");
+                    printMenu(options);
+                    option = input.nextInt();
+                }
+            } catch (Exception ex) {
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
             }
         }
@@ -316,12 +588,12 @@ public class Main {
                 input.nextLine();
 
                 while (option != 1 && option != 2 && option != 3) {
-                    System.out.println("Please choose a valid option:");
+                    System.out.println("ERROR: Please choose a valid option:");
                     printMenu(options);
                     option = input.nextInt();
                 }
             } catch (Exception ex) {
-                System.out.println("Invalid input. Please enter an option number:");
+                System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
             }
         }

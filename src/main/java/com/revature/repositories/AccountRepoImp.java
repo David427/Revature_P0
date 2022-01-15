@@ -50,6 +50,7 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public CheckingAccount getCheckingByOwner(int id) {
+        CheckingAccount acct = new CheckingAccount();
         String sql = "SELECT * FROM c_accounts WHERE owner_id = ?";
 
         try {
@@ -58,13 +59,13 @@ public class AccountRepoImp implements AccountRepo {
 
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                return buildChecking(rs);
+            while (rs.next()) {
+                acct = buildChecking(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return acct;
     }
 
     @Override
@@ -152,6 +153,7 @@ public class AccountRepoImp implements AccountRepo {
 
     @Override
     public SavingsAccount getSavingsByOwner(int id) {
+        SavingsAccount acct = new SavingsAccount();
         String sql = "SELECT * FROM s_accounts WHERE owner_id = ?";
 
         try {
@@ -161,12 +163,12 @@ public class AccountRepoImp implements AccountRepo {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return buildSavings(rs);
+                acct = (buildSavings(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return acct;
     }
 
     @Override

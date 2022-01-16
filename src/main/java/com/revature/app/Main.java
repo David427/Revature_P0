@@ -381,7 +381,7 @@ public class Main {
                             savingsView = false;
 
                         } else if (option == 2) { //Deposit.
-                            checkingView = true;
+                            savingsView = true;
                             double deposit = 0;
                             boolean validDeposit = false;
                             boolean cancelDeposit = false;

@@ -373,7 +373,7 @@ public class Main {
                             accountService.updateSavings(sAccount);
 
                             long currentTime = System.currentTimeMillis();
-                            Transaction transaction = new Transaction(loggedInUserId, "Transfer", "Savings", "N/A", withdrawal, currentTime);
+                            Transaction transaction = new Transaction(loggedInUserId, "Withdrawal", "Savings", "N/A", withdrawal, currentTime);
                             accountService.addTransaction(transaction);
 
                             System.out.println("Withdrawal success: " + formatter.format(withdrawal));
@@ -419,7 +419,7 @@ public class Main {
                             accountService.updateSavings(sAccount);
 
                             long currentTime = System.currentTimeMillis();
-                            Transaction transaction = new Transaction(loggedInUserId, "Transfer", "N/A", "Savings", deposit, currentTime);
+                            Transaction transaction = new Transaction(loggedInUserId, "Deposit", "N/A", "Savings", deposit, currentTime);
                             accountService.addTransaction(transaction);
 
                             System.out.println("Deposit success: " + formatter.format(deposit));

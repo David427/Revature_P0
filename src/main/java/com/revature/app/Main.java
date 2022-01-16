@@ -47,7 +47,7 @@ public class Main {
                 System.out.println("==========" +
                         "\nUSER LOGIN" +
                         "\n==========");
-                System.out.println("Enter your username.");
+                System.out.println("Enter your username:");
                 String userLogin = input.nextLine();
                 User user = userService.findUser(userLogin);
 
@@ -56,7 +56,7 @@ public class Main {
                     option = userNotFoundMenu();
 
                     if (option == 1) {
-                        System.out.println("Enter your username.");
+                        System.out.println("Enter your username:");
                         userLogin = input.nextLine();
                         user = userService.findUser(userLogin);
                     } else {
@@ -65,7 +65,7 @@ public class Main {
                 }
 
                 if (user != null) {
-                    System.out.println("Enter your password.");
+                    System.out.println("Enter your password:");
                     String userPassword = input.nextLine();
 
                     while (!Objects.equals(user.getUserPassword(), userPassword)) {
@@ -73,7 +73,7 @@ public class Main {
                         option = passwordNotFoundMenu();
 
                         if (option == 1) {
-                            System.out.println("Enter your password.");
+                            System.out.println("Enter your password:");
                             userPassword = input.nextLine();
                         } else {
                             break;
@@ -91,7 +91,7 @@ public class Main {
                 System.out.println("========" +
                         "\nNEW USER" +
                         "\n========");
-                System.out.println("Enter a username.");
+                System.out.println("Enter a username:");
                 String newLogin = input.nextLine();
 
                 //Populate a list of users from the db to perform unique username checking.
@@ -104,9 +104,9 @@ public class Main {
                     userExists = userList.checkIfExists(newLogin);
                 }
 
-                System.out.println("Thank you. Now, create a password.");
+                System.out.println("Thank you. Now, create a password:");
                 String newPassword = input.nextLine();
-                System.out.println("Password confirmation. Type your password again.");
+                System.out.println("Password confirmation. Type your password again:");
                 String newPasswordConfirm = input.nextLine();
 
                 while (!Objects.equals(newPasswordConfirm, newPassword)) {
@@ -263,7 +263,7 @@ public class Main {
                                         option = accountActionErrorMenu();
 
                                         if (option == 1) {
-                                            System.out.println("Enter a new amount.");
+                                            System.out.println("Enter a new amount:");
                                             transfer = input.nextDouble();
                                         } else if (option == 2) {
                                             cancelTransfer = true;
@@ -447,7 +447,7 @@ public class Main {
                                         option = accountActionErrorMenu();
 
                                         if (option == 1) {
-                                            System.out.println("Enter a new amount.");
+                                            System.out.println("Enter a new amount:");
                                             transfer = input.nextDouble();
                                         } else if (option == 2) {
                                             cancelTransfer = true;
@@ -511,7 +511,7 @@ public class Main {
                             continue;
                         }
 
-                        System.out.println("Enter a friendly name for this account.");
+                        System.out.println("Enter a friendly name for this account:");
                         String newCheckingName = input.nextLine();
 
                         CheckingAccount newChecking = new CheckingAccount(loggedInUserId, newCheckingName);
@@ -528,7 +528,7 @@ public class Main {
                             continue;
                         }
 
-                        System.out.println("Enter a friendly name for this account.");
+                        System.out.println("Enter a friendly name for this account:");
                         String newSavingsName = input.nextLine();
 
                         SavingsAccount newSavings = new SavingsAccount(loggedInUserId, newSavingsName);

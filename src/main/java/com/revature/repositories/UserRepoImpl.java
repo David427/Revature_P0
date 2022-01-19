@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRepoImp implements UserRepo {
+public class UserRepoImpl implements UserRepo {
 
     Connection conn = JDBCConnection.getConnection();
 
@@ -113,7 +113,7 @@ public class UserRepoImp implements UserRepo {
         }
     }
 
-    // Helper method.
+    //region HELPER METHODS
     private User buildUser(ResultSet rs) throws SQLException {
         User u = new User();
         u.setUserId(rs.getInt("u_id"));
@@ -121,4 +121,5 @@ public class UserRepoImp implements UserRepo {
         u.setUserPassword(rs.getString("u_password"));
         return u;
     }
+    //endregion
 }

@@ -1,11 +1,11 @@
 package com.revature.app;
 
 import com.revature.models.CheckingAccount;
-import com.revature.models.SavingsAccount;
 import com.revature.repositories.AccountRepoImpl;
 import com.revature.repositories.UserRepoImpl;
 import com.revature.services.AccountServiceImpl;
 import com.revature.services.UserServiceImpl;
+import com.revature.models.SavingsAccount;
 
 import java.text.NumberFormat;
 import java.util.Scanner;
@@ -187,6 +187,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -212,6 +213,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -237,6 +239,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -268,6 +271,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -304,6 +308,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -339,6 +344,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -364,6 +370,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();
@@ -393,6 +400,7 @@ public class Main {
                     printMenu(options);
                     option = input.nextInt();
                 }
+
             } catch (Exception ex) {
                 System.out.println("ERROR: Invalid input. Please enter an option number:");
                 input.next();

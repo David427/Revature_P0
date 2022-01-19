@@ -26,8 +26,8 @@ public class Main {
     static AccountRepoImp accountRepo = new AccountRepoImp();
     static AccountServiceImp accountService = new AccountServiceImp(accountRepo);
     static NumberFormat formatter = NumberFormat.getCurrencyInstance();
-    static boolean loggedIn = false;
-    static int loggedInUserId = 0;
+    public static boolean loggedIn = false;
+    public static int loggedInUserId = 0;
     static boolean accountsView = false;
     static boolean checkingView = false;
     static boolean savingsView = false;
@@ -40,85 +40,17 @@ public class Main {
         int option;
 
         while (!loggedIn) {
+            Scanner input = new Scanner(System.in);
             option = loginMenu();
 
             //User actions.
-            if (option == 1) { //Log in.
-                System.out.println("==========" +
-                        "\nUSER LOGIN" +
-                        "\n==========");
-                System.out.println("Enter your username:");
-                String userLogin = input.nextLine();
-                User user = userService.findUser(userLogin);
+            if (option == 1) {
+                userService.logIn();
 
-                while (user == null) {
-                    System.out.println("ERROR: User not found.");
-                    option = userNotFoundMenu();
+            } else if (option == 2) {
+                userService.register();
 
-                    if (option == 1) {
-                        System.out.println("Enter your username:");
-                        userLogin = input.nextLine();
-                        user = userService.findUser(userLogin);
-                    } else {
-                        break;
-                    }
-                }
-
-                if (user != null) {
-                    System.out.println("Enter your password:");
-                    String userPassword = input.nextLine();
-
-                    while (!Objects.equals(user.getUserPassword(), userPassword)) {
-                        System.out.println("ERROR: Invalid password. Please try again.");
-                        option = passwordNotFoundMenu();
-
-                        if (option == 1) {
-                            System.out.println("Enter your password:");
-                            userPassword = input.nextLine();
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (Objects.equals(user.getUserPassword(), userPassword)) {
-                        System.out.println("Login successful! Welcome.");
-                        loggedInUserId = user.getUserId();
-                        loggedIn = true;
-                    }
-                }
-
-            } else if (option == 2) { //Register.
-                System.out.println("========" +
-                        "\nNEW USER" +
-                        "\n========");
-                System.out.println("Enter a username:");
-                String newLogin = input.nextLine();
-
-                //Populate a list of users from the db to perform unique username checking.
-                LinkedList<User> userList = userService.getAllUsers();
-                boolean userExists = userList.checkIfExists(newLogin);
-
-                while (userExists) {
-                    System.out.println("ERROR: Username unavailable. Please choose a different one.");
-                    newLogin = input.nextLine();
-                    userExists = userList.checkIfExists(newLogin);
-                }
-
-                System.out.println("Thank you. Now, create a password:");
-                String newPassword = input.nextLine();
-                System.out.println("Password confirmation. Type your password again:");
-                String newPasswordConfirm = input.nextLine();
-
-                while (!Objects.equals(newPasswordConfirm, newPassword)) {
-                    System.out.println("ERROR: Passwords do not match. Try again.");
-                    newPasswordConfirm = input.nextLine();
-                }
-
-                User user = new User(newLogin, newPassword);
-                userService.addUser(user);
-                System.out.println("Account successfully created!");
-
-            } else if (option == 3) { //Exit.
+            } else if (option == 3) {
                 System.out.println("Thank you for visiting David's Bank. Goodbye.");
                 exit(0);
             }

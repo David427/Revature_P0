@@ -113,7 +113,7 @@ public class UserRepoImp implements UserRepo {
         }
     }
 
-    // Helper method.
+    //region HELPER METHODS
     private User buildUser(ResultSet rs) throws SQLException {
         User u = new User();
         u.setUserId(rs.getInt("u_id"));
@@ -121,4 +121,5 @@ public class UserRepoImp implements UserRepo {
         u.setUserPassword(rs.getString("u_password"));
         return u;
     }
+    //endregion
 }

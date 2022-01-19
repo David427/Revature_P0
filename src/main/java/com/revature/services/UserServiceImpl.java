@@ -8,11 +8,11 @@ import com.revature.util.LinkedList;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class UserServiceImp implements UserService {
+public class UserServiceImpl implements UserService {
 
     private UserRepo userRepo;
 
-    public UserServiceImp(UserRepo userRepo) {
+    public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -92,7 +92,6 @@ public class UserServiceImp implements UserService {
                 Main.loggedIn = true;
             }
         }
-        input.close();
     }
 
     @Override
@@ -128,7 +127,5 @@ public class UserServiceImp implements UserService {
         User user = new User(newLogin, newPassword);
         addUser(user);
         System.out.println("Account successfully created!");
-
-        input.close();
     }
 }

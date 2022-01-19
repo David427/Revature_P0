@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AccountRepoImp implements AccountRepo {
+public class AccountRepoImpl implements AccountRepo {
 
     Connection conn = JDBCConnection.getConnection();
 

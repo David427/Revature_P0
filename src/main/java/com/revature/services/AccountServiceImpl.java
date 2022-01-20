@@ -352,6 +352,7 @@ public class AccountServiceImpl implements AccountService {
         if (s.getSavingsId() == 0) {
             System.out.println("ERROR: You don't have a Savings account to transfer to! Please create one.");
             Main.accountsView = false;
+            Main.checkingView = false;
             return;
         }
 
@@ -380,7 +381,7 @@ public class AccountServiceImpl implements AccountService {
 
             } catch (InputMismatchException e) {
                 System.out.println("ERROR: Invalid input. Enter an amount to transfer" +
-                        "in the following format: ##.##");
+                        " in the following format: ##.##");
                 input.next();
             }
         }
@@ -413,6 +414,7 @@ public class AccountServiceImpl implements AccountService {
         if (c.getCheckingId() == 0) {
             System.out.println("ERROR: You don't have a Checking account to transfer to! Please create one.");
             Main.accountsView = false;
+            Main.savingsView = false;
             return;
         }
 
@@ -421,7 +423,7 @@ public class AccountServiceImpl implements AccountService {
             try {
                 transfer = input.nextDouble();
 
-                while (transfer > cBalance || transfer <= 0) {
+                while (transfer > sBalance || transfer <= 0) {
                     System.out.println("ERROR: Invalid transfer amount.");
                     option = Main.accountActionErrorMenu();
 
@@ -441,7 +443,7 @@ public class AccountServiceImpl implements AccountService {
 
             } catch (InputMismatchException e) {
                 System.out.println("ERROR: Invalid input. Enter an amount to transfer" +
-                        "in the following format: ##.##");
+                        " in the following format: ##.##");
                 input.next();
             }
         }
@@ -512,6 +514,7 @@ public class AccountServiceImpl implements AccountService {
         addChecking(newChecking);
         System.out.println("Account '" + newCheckingName + "' created!");
         Main.accountsView = false;
+        Main.creationView = false;
     }
 
     @Override
@@ -533,5 +536,6 @@ public class AccountServiceImpl implements AccountService {
         addSavings(newSavings);
         System.out.println("Account '" + newSavingsName + "' created!");
         Main.accountsView = false;
+        Main.creationView = false;
     }
 }

@@ -1,8 +1,8 @@
 package com.revature.services;
 
 import com.revature.models.Transaction;
-import com.revature.repositories.AccountRepo;
-import com.revature.app.Main;
+import com.revature.repositories.AccountRepoTest;
+import com.revature.app.TestDriver;
 import com.revature.models.CheckingAccount;
 import com.revature.models.SavingsAccount;
 import com.revature.util.LinkedList;
@@ -11,92 +11,92 @@ import java.text.NumberFormat;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class AccountServiceImpl implements AccountService {
+public class AccountServiceImplTest implements AccountServiceTest {
 
-    private AccountRepo accountRepo;
+    private AccountRepoTest accountRepoTest;
 
-    public AccountServiceImpl(AccountRepo accountRepo) {
-        this.accountRepo = accountRepo;
+    public AccountServiceImplTest(AccountRepoTest accountRepoTest) {
+        this.accountRepoTest = accountRepoTest;
     }
 
     @Override
     public void addChecking(CheckingAccount c) {
-        accountRepo.addChecking(c);
+        accountRepoTest.addChecking(c);
     }
 
     @Override
     public CheckingAccount getChecking(int id) {
-        return accountRepo.getChecking(id);
+        return accountRepoTest.getChecking(id);
     }
 
     @Override
     public CheckingAccount getCheckingByOwner(int id) {
-        return accountRepo.getCheckingByOwner(id);
+        return accountRepoTest.getCheckingByOwner(id);
     }
 
     @Override
     public LinkedList<CheckingAccount> getAllChecking() {
-        return accountRepo.getAllChecking();
+        return accountRepoTest.getAllChecking();
     }
 
     @Override
     public void updateChecking(CheckingAccount change) {
-        accountRepo.updateChecking(change);
+        accountRepoTest.updateChecking(change);
     }
 
     @Override
     public void deleteChecking(int id) {
-        accountRepo.deleteChecking(id);
+        accountRepoTest.deleteChecking(id);
     }
 
     @Override
     public void addSavings(SavingsAccount s) {
-        accountRepo.addSavings(s);
+        accountRepoTest.addSavings(s);
     }
 
     @Override
     public SavingsAccount getSavings(int id) {
-        return accountRepo.getSavings(id);
+        return accountRepoTest.getSavings(id);
     }
 
     @Override
     public SavingsAccount getSavingsByOwner(int id) {
-        return accountRepo.getSavingsByOwner(id);
+        return accountRepoTest.getSavingsByOwner(id);
     }
 
     @Override
     public LinkedList<SavingsAccount> getAllSavings() {
-        return accountRepo.getAllSavings();
+        return accountRepoTest.getAllSavings();
     }
 
     @Override
     public void updateSavings(SavingsAccount change) {
-        accountRepo.updateSavings(change);
+        accountRepoTest.updateSavings(change);
     }
 
     @Override
     public void deleteSavings(int id) {
-        accountRepo.deleteSavings(id);
+        accountRepoTest.deleteSavings(id);
     }
 
     @Override
     public void addTransaction(Transaction t) {
-        accountRepo.addTransaction(t);
+        accountRepoTest.addTransaction(t);
     }
 
     @Override
     public LinkedList<Transaction> getCheckingTransactions(int id) {
-        return accountRepo.getCheckingTransactions(id);
+        return accountRepoTest.getCheckingTransactions(id);
     }
 
     @Override
     public LinkedList<Transaction> getSavingsTransactions(int id) {
-        return accountRepo.getSavingsTransactions(id);
+        return accountRepoTest.getSavingsTransactions(id);
     }
 
     @Override
     public LinkedList<Transaction> getAllTransactions(int id) {
-        return accountRepo.getAllTransactions(id);
+        return accountRepoTest.getAllTransactions(id);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
         Scanner input = new Scanner(System.in);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         int option;
-        Main.checkingView = true;
+        TestDriver.checkingView = true;
         double withdrawal = 0;
         boolean validWithdrawal = false;
         boolean cancelWithdrawal = false;
@@ -116,7 +116,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (withdrawal > balance || withdrawal <= 0) {
                     System.out.println("ERROR: Invalid withdrawal amount.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount.");
@@ -143,13 +143,13 @@ public class AccountServiceImpl implements AccountService {
 
         if (validWithdrawal) {
             long currentTime = System.currentTimeMillis();
-            Transaction transaction = new Transaction(Main.loggedInUserId, "Withdrawal", "Checking", "N/A", withdrawal, currentTime);
+            Transaction transaction = new Transaction(TestDriver.loggedInUserId, "Withdrawal", "Checking", "N/A", withdrawal, currentTime);
             addTransaction(transaction);
             System.out.println("Withdrawal success: " + formatter.format(withdrawal));
         }
 
-        Main.checkingBalance = c.getCheckingBalance();
-        Main.checkingView = false;
+        TestDriver.checkingBalance = c.getCheckingBalance();
+        TestDriver.checkingView = false;
     }
 
     @Override
@@ -157,7 +157,7 @@ public class AccountServiceImpl implements AccountService {
         Scanner input = new Scanner(System.in);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         int option;
-        Main.savingsView = true;
+        TestDriver.savingsView = true;
         double withdrawal = 0;
         boolean validWithdrawal = false;
         boolean cancelWithdrawal = false;
@@ -169,7 +169,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (withdrawal > balance || withdrawal <= 0) {
                     System.out.println("ERROR: Invalid withdrawal amount.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount.");
@@ -196,13 +196,13 @@ public class AccountServiceImpl implements AccountService {
 
         if (validWithdrawal) {
             long currentTime = System.currentTimeMillis();
-            Transaction transaction = new Transaction(Main.loggedInUserId, "Withdrawal", "Savings", "N/A", withdrawal, currentTime);
+            Transaction transaction = new Transaction(TestDriver.loggedInUserId, "Withdrawal", "Savings", "N/A", withdrawal, currentTime);
             addTransaction(transaction);
             System.out.println("Withdrawal success: " + formatter.format(withdrawal));
         }
 
-        Main.savingsBalance = s.getSavingsBalance();
-        Main.savingsView = false;
+        TestDriver.savingsBalance = s.getSavingsBalance();
+        TestDriver.savingsView = false;
     }
 
     @Override
@@ -210,7 +210,7 @@ public class AccountServiceImpl implements AccountService {
         Scanner input = new Scanner(System.in);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         int option;
-        Main.checkingView = true;
+        TestDriver.checkingView = true;
         double deposit = 0;
         boolean validDeposit = false;
         boolean cancelDeposit = false;
@@ -222,7 +222,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (deposit <= 0) {
                     System.out.println("ERROR: Cannot deposit a negative or null amount.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount.");
@@ -236,7 +236,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (deposit > 10000) {
                     System.out.println("ERROR: Cannot deposit more than $10,000 at once.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount.");
@@ -263,13 +263,13 @@ public class AccountServiceImpl implements AccountService {
 
         if (validDeposit) {
             long currentTime = System.currentTimeMillis();
-            Transaction transaction = new Transaction(Main.loggedInUserId, "Deposit", "N/A", "Checking", deposit, currentTime);
+            Transaction transaction = new Transaction(TestDriver.loggedInUserId, "Deposit", "N/A", "Checking", deposit, currentTime);
             addTransaction(transaction);
             System.out.println("Deposit success: " + formatter.format(deposit));
         }
 
-        Main.checkingBalance = c.getCheckingBalance();
-        Main.checkingView = false;
+        TestDriver.checkingBalance = c.getCheckingBalance();
+        TestDriver.checkingView = false;
     }
 
     @Override
@@ -277,7 +277,7 @@ public class AccountServiceImpl implements AccountService {
         Scanner input = new Scanner(System.in);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         int option;
-        Main.savingsView = true;
+        TestDriver.savingsView = true;
         double deposit = 0;
         boolean validDeposit = false;
         boolean cancelDeposit = false;
@@ -289,7 +289,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (deposit <= 0) {
                     System.out.println("ERROR: Cannot deposit a negative or null amount.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount.");
@@ -303,7 +303,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (deposit > 10000) {
                     System.out.println("ERROR: Cannot deposit more than $10,000 at once.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount.");
@@ -330,13 +330,13 @@ public class AccountServiceImpl implements AccountService {
 
         if (validDeposit) {
             long currentTime = System.currentTimeMillis();
-            Transaction transaction = new Transaction(Main.loggedInUserId, "Deposit", "N/A", "Savings", deposit, currentTime);
+            Transaction transaction = new Transaction(TestDriver.loggedInUserId, "Deposit", "N/A", "Savings", deposit, currentTime);
             addTransaction(transaction);
             System.out.println("Deposit success: " + formatter.format(deposit));
         }
 
-        Main.savingsBalance = s.getSavingsBalance();
-        Main.savingsView = false;
+        TestDriver.savingsBalance = s.getSavingsBalance();
+        TestDriver.savingsView = false;
     }
 
     @Override
@@ -344,14 +344,14 @@ public class AccountServiceImpl implements AccountService {
         Scanner input = new Scanner(System.in);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         int option;
-        Main.checkingView = true;
+        TestDriver.checkingView = true;
         double transfer = 0;
         boolean validTransfer = false;
         boolean cancelTransfer = false;
 
         if (s.getSavingsId() == 0) {
             System.out.println("ERROR: You don't have a Savings account to transfer to! Please create one.");
-            Main.accountsView = false;
+            TestDriver.accountsView = false;
             return;
         }
 
@@ -362,7 +362,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (transfer > cBalance || transfer <= 0) {
                     System.out.println("ERROR: Invalid transfer amount.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount:");
@@ -391,13 +391,13 @@ public class AccountServiceImpl implements AccountService {
 
         if (validTransfer) {
             long currentTime = System.currentTimeMillis();
-            Transaction transaction = new Transaction(Main.loggedInUserId, "Transfer", "Checking", "Savings", transfer, currentTime);
+            Transaction transaction = new Transaction(TestDriver.loggedInUserId, "Transfer", "Checking", "Savings", transfer, currentTime);
             addTransaction(transaction);
             System.out.println("Transfer success: " + formatter.format(transfer));
         }
 
-        Main.checkingBalance = c.getCheckingBalance();
-        Main.checkingView = false;
+        TestDriver.checkingBalance = c.getCheckingBalance();
+        TestDriver.checkingView = false;
     }
 
     @Override
@@ -405,14 +405,14 @@ public class AccountServiceImpl implements AccountService {
         Scanner input = new Scanner(System.in);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         int option;
-        Main.savingsView = true;
+        TestDriver.savingsView = true;
         double transfer = 0;
         boolean validTransfer = false;
         boolean cancelTransfer = false;
 
         if (c.getCheckingId() == 0) {
             System.out.println("ERROR: You don't have a Checking account to transfer to! Please create one.");
-            Main.accountsView = false;
+            TestDriver.accountsView = false;
             return;
         }
 
@@ -423,7 +423,7 @@ public class AccountServiceImpl implements AccountService {
 
                 while (transfer > cBalance || transfer <= 0) {
                     System.out.println("ERROR: Invalid transfer amount.");
-                    option = Main.accountActionErrorMenu();
+                    option = TestDriver.accountActionErrorMenu();
 
                     if (option == 1) {
                         System.out.println("Enter a new amount:");
@@ -452,86 +452,86 @@ public class AccountServiceImpl implements AccountService {
 
         if (validTransfer) {
             long currentTime = System.currentTimeMillis();
-            Transaction transaction = new Transaction(Main.loggedInUserId, "Transfer", "Savings", "Checking", transfer, currentTime);
+            Transaction transaction = new Transaction(TestDriver.loggedInUserId, "Transfer", "Savings", "Checking", transfer, currentTime);
             addTransaction(transaction);
             System.out.println("Transfer success: " + formatter.format(transfer));
         }
 
-        Main.savingsBalance = s.getSavingsBalance();
-        Main.savingsView = false;
+        TestDriver.savingsBalance = s.getSavingsBalance();
+        TestDriver.savingsView = false;
     }
 
     @Override
     public void viewHistory(CheckingAccount c) {
-        Main.checkingView = true;
+        TestDriver.checkingView = true;
         System.out.println("===================" +
                 "\nTRANSACTION HISTORY" +
                 "\n===================");
-        LinkedList<Transaction> cTransactions = getCheckingTransactions(Main.loggedInUserId);
+        LinkedList<Transaction> cTransactions = getCheckingTransactions(TestDriver.loggedInUserId);
 
         if (cTransactions.getSize() == 0) {
             System.out.println("ERROR: You have no transactions for this account.");
         } else {
             System.out.println(cTransactions);
         }
-        Main.checkingView = false;
+        TestDriver.checkingView = false;
     }
 
     @Override
     public void viewHistory(SavingsAccount s) {
-        Main.savingsView = true;
+        TestDriver.savingsView = true;
         System.out.println("===================" +
                 "\nTRANSACTION HISTORY" +
                 "\n===================");
-        LinkedList<Transaction> sTransactions = getSavingsTransactions(Main.loggedInUserId);
+        LinkedList<Transaction> sTransactions = getSavingsTransactions(TestDriver.loggedInUserId);
 
         if (sTransactions.getSize() == 0) {
             System.out.println("ERROR: You have no transactions for this account.");
         } else {
             System.out.println(sTransactions);
         }
-        Main.savingsView = false;
+        TestDriver.savingsView = false;
     }
 
     @Override
     public void createChecking() {
         Scanner input = new Scanner(System.in);
-        CheckingAccount cAccount = getCheckingByOwner(Main.loggedInUserId);
-        Main.creationView = true;
+        CheckingAccount cAccount = getCheckingByOwner(TestDriver.loggedInUserId);
+        TestDriver.creationView = true;
 
         if (cAccount.getCheckingId() != 0) {
             System.out.println("ERROR: You already have a Checking account!");
-            Main.creationView = false;
+            TestDriver.creationView = false;
             return;
         }
 
         System.out.println("Enter a friendly name for this account:");
         String newCheckingName = input.nextLine();
 
-        CheckingAccount newChecking = new CheckingAccount(Main.loggedInUserId, newCheckingName);
+        CheckingAccount newChecking = new CheckingAccount(TestDriver.loggedInUserId, newCheckingName);
         addChecking(newChecking);
         System.out.println("Account '" + newCheckingName + "' created!");
-        Main.accountsView = false;
+        TestDriver.accountsView = false;
     }
 
     @Override
     public void createSavings() {
         Scanner input = new Scanner(System.in);
-        SavingsAccount sAccount = getSavingsByOwner(Main.loggedInUserId);
-        Main.creationView = true;
+        SavingsAccount sAccount = getSavingsByOwner(TestDriver.loggedInUserId);
+        TestDriver.creationView = true;
 
         if (sAccount.getSavingsId() != 0) {
             System.out.println("ERROR: You already have a Savings account!");
-            Main.creationView = false;
+            TestDriver.creationView = false;
             return;
         }
 
         System.out.println("Enter a friendly name for this account:");
         String newSavingsName = input.nextLine();
 
-        SavingsAccount newSavings = new SavingsAccount(Main.loggedInUserId, newSavingsName);
+        SavingsAccount newSavings = new SavingsAccount(TestDriver.loggedInUserId, newSavingsName);
         addSavings(newSavings);
         System.out.println("Account '" + newSavingsName + "' created!");
-        Main.accountsView = false;
+        TestDriver.accountsView = false;
     }
 }

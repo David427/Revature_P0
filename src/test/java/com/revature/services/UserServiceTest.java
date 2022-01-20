@@ -3,7 +3,7 @@ package com.revature.services;
 import com.revature.util.LinkedList;
 import com.revature.models.User;
 
-public interface UserService {
+public interface UserServiceTest {
 
     //Trivial methods.
     public void addUser(User u);

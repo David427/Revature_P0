@@ -1,21 +1,25 @@
 package com.revature.services;
 
-import com.revature.app.Main;
+import com.revature.app.TestDriver;
 import com.revature.models.User;
-import com.revature.repositories.UserRepo;
+import com.revature.repositories.UserRepoImplTest;
+import com.revature.repositories.UserRepoTest;
 import com.revature.util.LinkedList;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class UserServiceImpl implements UserService {
+public class UserServiceImplTest implements UserServiceTest {
 
-    private UserRepo userRepo;
+    private UserRepoImplTest userRepo = new UserRepoImplTest();
 
-    public UserServiceImpl(UserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
+    //public UserServiceImplTest(UserRepoTest userRepo) {
+    //    this.userRepo = userRepo;
+    //}
 
     @Override
     public void addUser(User u) {
@@ -49,7 +53,9 @@ public class UserServiceImpl implements UserService {
     @Test
     @Override
     public void logIn() {
-        Scanner input = new Scanner(System.in);
+        ByteArrayInputStream in = new ByteArrayInputStream("My string".getBytes());
+        System.setIn(in);
+        Scanner input = new Scanner(in);
         int option;
 
         System.out.println("==========" +
@@ -59,9 +65,11 @@ public class UserServiceImpl implements UserService {
         String userLogin = input.nextLine();
         User user = findUser(userLogin);
 
+        assertEquals(userLogin, user.getUserLogin());
+
         while (user == null) {
             System.out.println("ERROR: User not found.");
-            option = Main.userNotFoundMenu();
+            option = TestDriver.userNotFoundMenu();
 
             if (option == 1) {
                 System.out.println("Enter your username:");
@@ -78,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
             while (!Objects.equals(user.getUserPassword(), userPassword)) {
                 System.out.println("ERROR: Invalid password. Please try again.");
-                option = Main.passwordNotFoundMenu();
+                option = TestDriver.passwordNotFoundMenu();
 
                 if (option == 1) {
                     System.out.println("Enter your password:");
@@ -90,8 +98,8 @@ public class UserServiceImpl implements UserService {
 
             if (Objects.equals(user.getUserPassword(), userPassword)) {
                 System.out.println("Login successful! Welcome.");
-                Main.loggedInUserId = user.getUserId();
-                Main.loggedIn = true;
+                TestDriver.loggedInUserId = user.getUserId();
+                TestDriver.loggedIn = true;
             }
         }
     }

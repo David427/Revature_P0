@@ -24,10 +24,10 @@ All project concepts must display the following domain-independent features/requ
  
 - [X] Use of custom data structures (do not use java.util Collections!)
 - [X] Basic validation of user input (e.g., no negative deposits/withdrawals, no overdrafting, etc.) 
-- [X] Unit tests for all business logic classes.
+- [ ] Unit tests for all business logic classes.
 - [X] All exceptions are properly caught and handled.
 - [X] Proper use of OOP principles.
-- [ ] Documentation (all classes and methods have basic documentation).
+- [X] Documentation (all classes and methods have basic documentation).
 - [ ] Database is 3rd Normal Form compliant.
 - [X] Referential integrity.
 - [X] Generation of basic design documents (e.g., relational diagram, class diagram, flows, etc.)

@@ -3,7 +3,7 @@ package com.revature.repositories;
 import com.revature.util.LinkedList;
 import com.revature.models.User;
 
-public interface UserRepo {
+public interface UserRepoTest {
     public void addUser(User u);
     public User getUser(int id);
     public User findUser(String name);

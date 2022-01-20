@@ -1,25 +1,27 @@
 package com.revature.app;
 
 import com.revature.models.CheckingAccount;
-import com.revature.repositories.AccountRepoImpl;
-import com.revature.repositories.UserRepoImpl;
-import com.revature.services.AccountServiceImpl;
-import com.revature.services.UserServiceImpl;
+import com.revature.repositories.AccountRepoImplTest;
+import com.revature.repositories.UserRepoImplTest;
+import com.revature.services.AccountServiceImplTest;
+import com.revature.services.UserServiceImplTest;
 import com.revature.models.SavingsAccount;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.text.NumberFormat;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
 
-public class Main {
+public class TestDriver {
 
     //region DECLARE & INIT VARS
     static Scanner input = new Scanner(System.in);
-    static UserRepoImpl userRepo = new UserRepoImpl();
-    static UserServiceImpl userService = new UserServiceImpl(userRepo);
-    static AccountRepoImpl accountRepo = new AccountRepoImpl();
-    static AccountServiceImpl accountService = new AccountServiceImpl(accountRepo);
+    static UserRepoImplTest userRepo = new UserRepoImplTest();
+    static UserServiceImplTest userService = new UserServiceImplTest();
+    static AccountRepoImplTest accountRepo = new AccountRepoImplTest();
+    static AccountServiceImplTest accountService = new AccountServiceImplTest(accountRepo);
     static NumberFormat formatter = NumberFormat.getCurrencyInstance();
     public static boolean loggedIn = false;
     public static int loggedInUserId = 0;
@@ -33,6 +35,7 @@ public class Main {
     public static double savingsBalance = 0;
     //endregion
 
+    @Test
     public static void main(String[] args) {
         int option;
 
@@ -68,6 +71,8 @@ public class Main {
 
                     //Retrieve account balances and friendly Checking account name.
                     checkingBalance = cAccount.getCheckingBalance();
+
+                    assertNotEquals(0, checkingBalance);
                     savingsBalance = sAccount.getSavingsBalance();
                     checkingName = cAccount.getCheckingName();
 

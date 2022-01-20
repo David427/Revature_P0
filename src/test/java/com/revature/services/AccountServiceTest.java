@@ -1,11 +1,13 @@
-package com.revature.repositories;
+package com.revature.services;
 
 import com.revature.models.CheckingAccount;
 import com.revature.models.SavingsAccount;
 import com.revature.models.Transaction;
 import com.revature.util.LinkedList;
 
-public interface AccountRepo {
+public interface AccountServiceTest {
+
+    //Trivial methods.
     public void addChecking(CheckingAccount c);
     public CheckingAccount getChecking(int id);
     public CheckingAccount getCheckingByOwner(int id);
@@ -24,4 +26,16 @@ public interface AccountRepo {
     public LinkedList<Transaction> getCheckingTransactions(int id);
     public LinkedList<Transaction> getSavingsTransactions(int id);
     public LinkedList<Transaction> getAllTransactions(int id);
+
+    //Complex methods.
+    public void withdraw(CheckingAccount c, double balance);
+    public void withdraw(SavingsAccount s, double balance);
+    public void deposit(CheckingAccount c, double balance);
+    public void deposit(SavingsAccount s, double balance);
+    public void transfer(CheckingAccount c, SavingsAccount s, double cBalance, double sBalance);
+    public void transfer(SavingsAccount s, CheckingAccount c, double sBalance, double cBalance);
+    public void viewHistory(CheckingAccount c);
+    public void viewHistory(SavingsAccount s);
+    public void createChecking();
+    public void createSavings();
 }
